@@ -39,6 +39,9 @@ jspm_packages/
 # TypeScript v1 declaration files
 typings/
 
+# Escape config.json and passwords
+config/
+
 # Optional npm cache directory
 .npm
 

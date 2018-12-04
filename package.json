@@ -4,6 +4,7 @@
   "description": "Back end for the Arigoni Project",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +23,7 @@
     "express": "^4.16.4",
     "morgan": "^1.9.1",
     "pg": "^7.7.1",
+    "pg-hstore": "^2.3.2",
     "sequelize": "^4.41.2",
     "sqlite": "^3.0.0"
   }
