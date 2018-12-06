@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
   debiteur.associate = function(models) {
     // associations can be defined here
     debiteur.hasMany(models.action);
-    debiteur.hasMany(models.facture);
+    // debiteur.hasMany(models.facture);
   };
   return debiteur;
 };
