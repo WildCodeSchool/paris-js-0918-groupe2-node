@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
+const models = require("./models");
 
 // Set up the express app
 const app = express();
@@ -17,5 +19,6 @@ app.get("*", (req, res) =>
     message: "Welcome to the beginning of nothingness."
   })
 );
+models.sequelize.sync().then(() => app.listen(4242));
 
 module.exports = app;
