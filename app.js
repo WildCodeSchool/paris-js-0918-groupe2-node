@@ -3,6 +3,7 @@ const express = require("express");
 const logger = require("morgan"); // prints all RESTful requests to the console
 const bodyParser = require("body-parser");
 const models = require("./models");
+const cors = require("cors");
 const Joi = require("joi"); // validation module
 
 const cabinetControllers = require("./controllers").cabinets;
@@ -15,6 +16,8 @@ if (app.get("env") === "development") {
   app.use(logger("tiny"));
   console.log("Dev environment: Morgan is running");
 }
+
+app.use(cors());
 
 // Parses the body of any request catched
 app.use(bodyParser.json());
