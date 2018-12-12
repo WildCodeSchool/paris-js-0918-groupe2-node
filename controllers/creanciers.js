@@ -37,7 +37,7 @@ module.exports = {
       .findOne({ where: { id: req.params.creancierId } })
       .then(creancier => {
         if (!creancier)
-          return res.status(404).send("Oh la la ! Creancier not found !");
+          return res.status(404).send("Le créancier n'existe pas.");
         return creancier
           .update({
             denomination_sociale:
@@ -76,19 +76,19 @@ module.exports = {
       })
       .then(creancier => {
         if (!creancier) {
-          res
-            .status(400)
-            .send(
-              "Mein gott ! Das ist ein gross problem ! Creancier nicht bin ein Berliner"
-            );
+          res.status(400).send("Le créancier n'existe pas.");
         }
         return creancier
           .destroy()
           .then(creancier => {
-            res.status(200).send("Success: Das problem ist terminated !");
+            res.status(200).send("Le créancier a été supprimé !");
           })
           .catch(error => {
-            res.status(400).send(`Error: Ich bin ein kartoffeln - ${error}`);
+            res
+              .status(400)
+              .send(
+                `Erreur : il n'est pas possible de supprimer le créancier. - ${error}`
+              );
           });
       });
   }
