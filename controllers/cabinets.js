@@ -31,17 +31,7 @@ module.exports = {
   },
   update(req, res) {
     return cabinet
-      .findOne(
-        { id: req.params.cabinetId },
-        {
-          include: [
-            {
-              model: cabinet,
-              as: "cabinet"
-            }
-          ]
-        }
-      )
+      .findOne({ where: { id: req.params.cabinetId } })
       .then(cabinet => {
         if (!cabinet) {
           return res.status(404).send({
@@ -73,7 +63,7 @@ module.exports = {
   },
   destroy(req, res) {
     return cabinet
-      .findOne({ id: req.params.cabinetId })
+      .findOne({ where: { id: req.params.cabinetId } })
       .then(cabinet => {
         if (!cabinet) {
           return res.status(400).send({

@@ -31,10 +31,10 @@ app.put("/api/cabinet/:cabinetId", cabinetControllers.update);
 app.delete("/api/cabinet/:cabinetId", cabinetControllers.destroy);
 
 // CRUD routes for Creanciers
-app.post('/api/creanciers', creanciersController.create)
-app.get('/api/creanciers', creanciersController.list)
-// app.put('/api/creanciers/:creancierId', creanciersController.update)
-// app.delete('/api/creanciers/:creancierId', creanciersController.destroy)
+app.post("/api/creanciers", creanciersController.create);
+app.get("/api/creanciers", creanciersController.list);
+app.put("/api/creanciers/:creancierId", creanciersController.update);
+app.delete("/api/creanciers/:creancierId", creanciersController.destroy);
 
 // Setup a default catch-all route that sends back a welcome message in JSON format.
 app.get("/", (req, res) =>
