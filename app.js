@@ -6,6 +6,7 @@ const models = require("./models");
 const Joi = require("joi"); // validation module
 
 const cabinetControllers = require("./controllers").cabinets;
+const creanciersController = require("./controllers").creanciers;
 
 // Set up the express app
 const app = express();
@@ -25,6 +26,12 @@ app.post("/api/cabinet", cabinetControllers.create);
 app.get("/api/cabinet", cabinetControllers.list);
 app.put("/api/cabinet/:cabinetId", cabinetControllers.update);
 app.delete("/api/cabinet/:cabinetId", cabinetControllers.destroy);
+
+// CRUD routes for Creanciers
+app.post('/api/creanciers', creanciersController.create)
+app.get('/api/creanciers', creanciersController.list)
+// app.put('/api/creanciers/:creancierId', creanciersController.update)
+// app.delete('/api/creanciers/:creancierId', creanciersController.destroy)
 
 // Setup a default catch-all route that sends back a welcome message in JSON format.
 app.get("/", (req, res) =>
