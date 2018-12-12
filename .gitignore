@@ -62,3 +62,6 @@ config/
 
 # next.js build output
 .next
+
+# MAC
+.DS_Store
