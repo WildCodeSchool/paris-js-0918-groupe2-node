@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       forme_juridique: DataTypes.STRING,
       nationalite_societe: DataTypes.STRING,
       adresse_siege: DataTypes.STRING,
-      code_postal_siege: DataTypes.INTEGER,
+      code_postal_siege: DataTypes.STRING,
       ville_siege: DataTypes.STRING,
       pays_siege: DataTypes.STRING,
       ville_rcs: DataTypes.STRING,
