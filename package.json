@@ -1,0 +1,32 @@
+{
+  "name": "projet_arigoni_back",
+  "version": "1.0.0",
+  "description": "Back end for the Arigoni Project",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WildCodeSchool/paris-js-0918-groupe2-node.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WildCodeSchool/paris-js-0918-groupe2-node/issues"
+  },
+  "homepage": "https://github.com/WildCodeSchool/paris-js-0918-groupe2-node#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "joi": "^14.3.0",
+    "morgan": "^1.9.1",
+    "pg": "^7.7.1",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.41.2",
+    "sqlite": "^3.0.0"
+  }
+}
