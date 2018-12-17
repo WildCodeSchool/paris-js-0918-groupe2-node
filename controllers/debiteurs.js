@@ -14,7 +14,7 @@ module.exports = {
         forme_juridique: req.body.forme_juridique,
         nationalite_societe: req.body.nationalite_societe,
         adresse_siege: req.body.adresse_siege,
-        code_postal_siege: req.body.code_postal_siege,
+        code_postal_siege: parseInt(req.body.code_postal_siege),
         ville_siege: req.body.ville_siege,
         pays_siege: req.body.pays_siege,
         ville_rcs: req.body.ville_rcs,
@@ -22,7 +22,7 @@ module.exports = {
         nom: req.body.nom,
         prenom: req.body.prenom,
         civilite: req.body.civilite,
-        fonction: req.body.fonction,
+        fonction: req.body.fonctionparseInt,
         active: req.body.active
       })
       .then(debiteur => res.status(201).send(debiteur))
@@ -45,7 +45,8 @@ module.exports = {
               req.body.nationalite_societe || debiteur.nationalite_societe,
             adresse_siege: req.body.adresse_siege || debiteur.adresse_siege,
             code_postal_siege:
-              req.body.code_postal_siege || debiteur.code_postal_siege,
+              parseInt(req.body.code_postal_siege) ||
+              debiteur.code_postal_siege,
             ville_siege: req.body.ville_siege || debiteur.ville_siege,
             pays_siege: req.body.pays_siege || debiteur.pays_siege,
             ville_rcs: req.body.ville_rcs || debiteur.ville_rcs,
