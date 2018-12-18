@@ -5,6 +5,11 @@ const bodyParser = require("body-parser");
 const models = require("./models");
 const cors = require("cors");
 const Joi = require("joi"); // validation module
+const multer = require("multer");
+const fs = require("fs");
+const upload = multer({ dest: "tmp/" });
+const path = require("path");
+// const router = express.Router();
 
 const cabinetControllers = require("./controllers").cabinets;
 const creanciersController = require("./controllers").creanciers;
@@ -24,12 +29,28 @@ app.use(cors());
 // Parses the body of any request catched
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
 
 // CRUD routes for the Cabinet
 app.post("/api/cabinet", cabinetControllers.create);
 app.get("/api/cabinet", cabinetControllers.list);
 app.put("/api/cabinet/:cabinetId", cabinetControllers.update);
 app.delete("/api/cabinet/:cabinetId", cabinetControllers.destroy);
+app.post(
+  "/dashboard/moncompte",
+  upload.array("signature", 2),
+  (req, res, next) => {
+    console.log(req.files);
+    for (f of req.files)
+      fs.rename(f.path, "public/images/" + f.originalname, function(err) {
+        if (err) {
+          res.send("problème durant le déplacement");
+        } else {
+          res.send("Fichier uploadé avec succès");
+        }
+      });
+  }
+);
 
 // CRUD routes for Creanciers
 app.post("/api/creanciers", creanciersController.create);
