@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     facture.hasMany(models.acompte);
     facture.hasMany(models.avoir);
+    facture.belongsTo(models.action);
   };
   return facture;
 };
