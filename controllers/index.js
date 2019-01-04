@@ -4,6 +4,7 @@ const debiteurs = require("./debiteurs");
 const factures = require("./factures");
 const avoirs = require("./avoirs");
 const acomptes = require("./acomptes");
+const actions = require("./actions");
 
 module.exports = {
   cabinets,
@@ -11,5 +12,6 @@ module.exports = {
   debiteurs,
   factures,
   avoirs,
-  acomptes
+  acomptes,
+  actions
 };

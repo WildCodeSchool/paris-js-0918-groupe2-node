@@ -11,12 +11,14 @@ const path = require("path");
 const models = require("./models");
 // const router = express.Router();
 
+// Gets all the controllers to be used
 const cabinetControllers = require("./controllers").cabinets;
 const creanciersController = require("./controllers").creanciers;
 const debiteursController = require("./controllers").debiteurs;
 const facturesController = require("./controllers").factures;
 const avoirsController = require("./controllers").avoirs;
 const acomptesController = require("./controllers").acomptes;
+const actionsController = require("./controllers").actions;
 
 // Set up the express app
 const app = express();
@@ -55,13 +57,13 @@ app.post(
   }
 );
 
-// CRUD routes for Creanciers
+// CRUD routes for the Creanciers
 app.post("/api/creanciers", creanciersController.create);
 app.get("/api/creanciers", creanciersController.list);
 app.put("/api/creanciers/:creancierId", creanciersController.update);
 app.delete("/api/creanciers/:creancierId", creanciersController.destroy);
 
-// CRUD routes for Debiteurs
+// CRUD routes for the Debiteurs
 app.get("/api/debiteurs", debiteursController.list);
 app.post("/api/debiteurs", debiteursController.create);
 app.put("/api/debiteurs/:debiteurId", debiteursController.update);
@@ -85,10 +87,16 @@ app.post("/api/acomptes", acomptesController.create);
 app.put("/api/acomptes/:acompteId", acomptesController.update);
 app.delete("/api/acomptes/:acompteId", acomptesController.destroy);
 
-// Setup a default catch-all route that sends back a welcome message in JSON format.
+// CRUD routes for the Actions
+app.get("/api/actions", actionsController.list);
+app.post("/api/actions", actionsController.create);
+app.put("/api/actions/:actionId", actionsController.update);
+app.delete("/api/actions/:actionId", actionsController.destroy);
+
+// Setup of a default catch-all route that sends back a message in JSON format.
 app.get("/", (req, res) =>
   res.status(200).send({
-    message: "Welcome to the beginning of hapiness."
+    message: "Welcome to the beginning of nothingness."
   })
 );
 models.sequelize.sync().then(() => app.listen(4848));
