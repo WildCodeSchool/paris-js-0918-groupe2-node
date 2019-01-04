@@ -2,18 +2,21 @@ require("dotenv").config();
 const express = require("express");
 const logger = require("morgan"); // prints all RESTful requests to the console
 const bodyParser = require("body-parser");
-const models = require("./models");
 const cors = require("cors");
 const Joi = require("joi"); // validation module
 const multer = require("multer");
 const fs = require("fs");
 const upload = multer({ dest: "tmp/" });
 const path = require("path");
+const models = require("./models");
 // const router = express.Router();
 
 const cabinetControllers = require("./controllers").cabinets;
 const creanciersController = require("./controllers").creanciers;
 const debiteursController = require("./controllers").debiteurs;
+const facturesController = require("./controllers").factures;
+const avoirsController = require("./controllers").avoirs;
+const acomptesController = require("./controllers").acomptes;
 
 // Set up the express app
 const app = express();
@@ -36,21 +39,21 @@ app.post("/api/cabinet", cabinetControllers.create);
 app.get("/api/cabinet", cabinetControllers.list);
 app.put("/api/cabinet/:cabinetId", cabinetControllers.update);
 app.delete("/api/cabinet/:cabinetId", cabinetControllers.destroy);
-// app.post(
-//   "/dashboard/moncompte",
-//   upload.array("signature", 2),
-//   (req, res, next) => {
-//     console.log(req.files);
-//     for (f of req.files)
-//       fs.rename(f.path, "public/images/" + f.originalname, function(err) {
-//         if (err) {
-//           res.send("problème durant le déplacement");
-//         } else {
-//           res.send("Fichier uploadé avec succès");
-//         }
-//       });
-//   }
-// );
+app.post(
+  "/dashboard/moncompte",
+  upload.array("signature", 2),
+  (req, res, next) => {
+    console.log(req.files);
+    for (f of req.files)
+      fs.rename(f.path, "public/images/" + f.originalname, function(err) {
+        if (err) {
+          res.send("problème durant le déplacement");
+        } else {
+          res.send("Fichier uploadé avec succès");
+        }
+      });
+  }
+);
 
 // CRUD routes for Creanciers
 app.post("/api/creanciers", creanciersController.create);
@@ -64,10 +67,28 @@ app.post("/api/debiteurs", debiteursController.create);
 app.put("/api/debiteurs/:debiteurId", debiteursController.update);
 app.delete("/api/debiteurs/:debiteurId", debiteursController.destroy);
 
+// CRUD routes for the Factures
+app.get("/api/factures", facturesController.list);
+app.post("/api/factures", facturesController.create);
+app.put("/api/factures/:factureId", facturesController.update);
+app.delete("/api/factures/:factureId", facturesController.destroy);
+
+// CRUD routes for the Avoirs
+app.get("/api/avoirs", avoirsController.list);
+app.post("/api/avoirs", avoirsController.create);
+app.put("/api/avoirs/:avoirId", avoirsController.update);
+app.delete("/api/avoirs/:avoirId", avoirsController.destroy);
+
+// CRUD routes for the Acomptes
+app.get("/api/acomptes", acomptesController.list);
+app.post("/api/acomptes", acomptesController.create);
+app.put("/api/acomptes/:acompteId", acomptesController.update);
+app.delete("/api/acomptes/:acompteId", acomptesController.destroy);
+
 // Setup a default catch-all route that sends back a welcome message in JSON format.
 app.get("/", (req, res) =>
   res.status(200).send({
-    message: "Welcome to the beginning of nothingness."
+    message: "Welcome to the beginning of hapiness."
   })
 );
 models.sequelize.sync().then(() => app.listen(4848));
