@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const action = sequelize.define(
     "action",
     {
+      nom_action: DataTypes.STRING,
       date: DataTypes.STRING,
       type: DataTypes.STRING,
       ville_tc_requete: DataTypes.STRING,

@@ -12,6 +12,7 @@ module.exports = {
   create(req, res) {
     return action
       .create({
+        nom_action: req.body.nom_action,
         date: req.body.date,
         type: req.body.type,
         ville_tc_requete: req.body.ville_tc_requete,
@@ -48,6 +49,7 @@ module.exports = {
         if (!action) return res.status(404).send("L'action n'existe pas.");
         return action
           .update({
+            nom_action: req.body.nom_action || action.nom_action,
             date: req.body.date || action.date,
             type: req.body.type || action.type,
             ville_tc_requete:
