@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('factures', {
+    return queryInterface.createTable("factures", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -24,19 +24,19 @@ module.exports = {
         type: Sequelize.STRING
       },
       montant_ht: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       montant_ttc: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       echeance_facture: {
         type: Sequelize.STRING
       },
       taux_applicable: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       intérets_capitalises: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       active: {
         type: Sequelize.BOOLEAN
@@ -52,6 +52,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('factures');
+    return queryInterface.dropTable("factures");
   }
 };

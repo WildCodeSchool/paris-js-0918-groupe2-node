@@ -1,4 +1,5 @@
 const facture = require("../models").facture;
+const action = require("../models").action;
 
 module.exports = {
   list(req, res) {
@@ -22,7 +23,13 @@ module.exports = {
         intérets_capitalises: req.body.intérets_capitalises,
         active: req.body.active
       })
-      .then(facture => res.status(201).send(facture))
+      .then(facture => {
+        action
+          .findOne({ where: { id: req.body.actionId } })
+          .then(action =>
+            action.addFacture(facture).then(() => res.status(201).send())
+          );
+      })
       .catch(error => res.status(400).send(error));
   },
   update(req, res) {

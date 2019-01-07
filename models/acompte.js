@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       num_acompte: DataTypes.STRING,
       date_acompte: DataTypes.STRING,
-      montant_ht: DataTypes.INTEGER,
-      montant_ttc: DataTypes.INTEGER,
+      montant_ht: DataTypes.FLOAT,
+      montant_ttc: DataTypes.FLOAT,
       active: DataTypes.BOOLEAN
     },
     {}

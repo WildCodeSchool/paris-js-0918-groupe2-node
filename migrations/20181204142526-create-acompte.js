@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('acomptes', {
+    return queryInterface.createTable("acomptes", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,10 +15,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       montant_ht: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       montant_ttc: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       active: {
         type: Sequelize.BOOLEAN
@@ -34,6 +34,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('acomptes');
+    return queryInterface.dropTable("acomptes");
   }
 };

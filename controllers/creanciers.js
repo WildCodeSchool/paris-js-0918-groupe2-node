@@ -1,4 +1,5 @@
 const creancier = require("../models").creancier;
+const cabinet = require("../models").cabinet;
 
 module.exports = {
   list(req, res) {
@@ -29,7 +30,13 @@ module.exports = {
         fonction: req.body.fonction,
         active: req.body.active
       })
-      .then(creancier => res.status(201).send(creancier))
+      .then(creancier => {
+        cabinet
+          .findOne({ where: { id: req.body.cabinetId } })
+          .then(cabinet =>
+            cabinet.addCreancier(creancier).then(() => res.status(201).send())
+          );
+      })
       .catch(error => res.status(400).send(error));
   },
   update(req, res) {
