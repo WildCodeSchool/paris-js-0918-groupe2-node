@@ -28,6 +28,7 @@ const mesAvoirs = [
 ];
 
 const dateFinCalculInterets = "30/06/2016";
+const points = 10;
 
 const getTotalCreance = (facture, acomptes, avoirs) => {
   let montantFacture = facture.montant_ttc;
@@ -83,8 +84,12 @@ const getDateRangesWithInterestRates = (startDate, endDate) => {
       nbreJourAnnee: nbreJoursAnnee
     });
   }
-  AnneesAvecJoursParSemestres.push({ nbreJoursInterets: nbreJoursInterets });
-  //   console.log(AnneesAvecJoursParSemestres);
+  AnneesAvecJoursParSemestres.push({
+    nbreJoursInterets: nbreJoursInterets,
+    dateDepart: depart_echeance,
+    dateFin: fin_echeance
+  });
+  console.log(AnneesAvecJoursParSemestres);
   return AnneesAvecJoursParSemestres;
 };
 
@@ -104,32 +109,72 @@ const getBCErates = (startDate, endDate) => {
     );
 };
 
-const AlgoDeOuf = async (
+const getCalculInteretsParSemestre = async (
   totalCreance,
   nbreJoursInterets,
   totalJoursAnnee,
   annee,
-  points
+  semestre,
+  points,
+  debut,
+  fin
 ) => {
-  const BCErate = await getBCErates(`${annee}-01-01`, `${annee}-01-01`).then(
-    res => {
-      let jourSurAnnee = nbreJoursInterets / totalJoursAnnee;
-      let rateEtPoint = (res + points) / 100;
-      console.log(totalCreance * jourSurAnnee * rateEtPoint);
-      console.log(nbreJoursInterets);
-    }
-  );
+  const calculInterets = [];
+  let mySemestre;
+  if (semestre === 1) {
+    mySemestre = "-01-01";
+  } else {
+    mySemestre = "-01-07";
+  }
 
+  const BCErate = await getBCErates(
+    `${annee}${mySemestre}`,
+    `${annee}${mySemestre}`
+  ).then(res => {
+    let jourSurAnnee = nbreJoursInterets / totalJoursAnnee;
+    let tauxBCEEtPoint = (res + points) / 100;
+    let calcul_interets_periode = totalCreance * jourSurAnnee * tauxBCEEtPoint;
+    calculInterets.push({
+      date_debut: debut.format("DD/MM/YYYY"),
+      date_fin: fin.format("DD/MM/YYYY"),
+      nbre_jours_comptabilises: nbreJoursInterets,
+      interets_periode: calcul_interets_periode
+    });
+    // console.log(nbreJoursInterets);
+  });
+  console.log(calculInterets);
   //   console.log(BCErate);
   // boucle for qui itere sur chaque semestre a reculon?
 };
 
-AlgoDeOuf(
-  totalCreance,
-  nbreJoursInterets[1].nbreJoursInterets,
-  nbreJoursInterets[0].nbreJourAnnee,
-  nbreJoursInterets[0].annee,
-  10
+getCalculInteretsTotal = (debut, fin) => {
+  let anneeDebut = parseInt(debut.format("YYYY"));
+  let anneeFin = parseInt(fin.format("YYYY"));
+  // si creance sur la meme annee
+  if (anneeDebut === anneeFin) {
+    let moisDebut = parseInt(debut.format("MM"));
+    let moisFin = parseInt(fin.format("MM"));
+    let semestre = 2;
+    // si creance sur un seul semestre
+    if (moisDebut < 7 && moisFin < 7) {
+      semestre = 1;
+    }
+    getCalculInteretsParSemestre(
+      totalCreance,
+      nbreJoursInterets[1].nbreJoursInterets,
+      nbreJoursInterets[0].nbreJourAnnee,
+      nbreJoursInterets[0].annee,
+      semestre,
+      points,
+      debut,
+      fin
+    );
+  }
+};
+
+getCalculInteretsTotal(
+  nbreJoursInterets[1].dateDepart,
+  nbreJoursInterets[1].dateFin
 );
 
 // let totalFacture = getTotalCreance(facture, mesAcomptes, mesAvoirs);
