@@ -36,11 +36,11 @@ const points = 10;
 const getTotalCreance = (facture, acomptes, avoirs) => {
   let montantFacture = facture.montant_ttc;
   let montantAvoir = 0;
-  for (i = 0; i < avoirs.length; i++) {
+  for (let i = 0; i < avoirs.length; i++) {
     montantAvoir += avoirs[i].montant_ttc;
   }
   let montantAcompte = 0;
-  for (i = 0; i < acomptes.length; i++) {
+  for (let i = 0; i < acomptes.length; i++) {
     montantAcompte += acomptes[i].montant_ttc;
   }
   let totalCreance = montantFacture - montantAvoir - montantAcompte;
@@ -62,13 +62,61 @@ const getDateRangesWithInterestRates = (startDate, endDate) => {
   let anneeDepart = parseInt(startDate.match(regexAnnee));
   let anneeFin = parseInt(endDate.match(regexAnnee));
   let mesAnnees = [anneeFin];
-  for (i = 1; i < nbreAnneesDifferences + 1; i++) {
+  for (let i = 1; i < nbreAnneesDifferences + 1; i++) {
     mesAnnees.push(anneeFin - i);
   }
 
   let AnneesAvecJoursParSemestres = [];
 
-  for (i = 0; i < mesAnnees.length; i++) {
+  for (let i = 0; i < mesAnnees.length; i++) {
+    let semestreUnDepart = moment(`01/01/${mesAnnees[i]}`, "DD/MM/YYYY", true);
+    let semestreUnFin = moment(`30/06/${mesAnnees[i]}`, "DD/MM/YYYY", true);
+    let semestreDeuxDepart = moment(
+      `01/07/${mesAnnees[i]}`,
+      "DD/MM/YYYY",
+      true
+    );
+    let semestreDeuxFin = moment(`31/12/${mesAnnees[i]}`, "DD/MM/YYYY", true);
+    let nbreJoursSemestreUn = semestreUnFin.diff(semestreUnDepart, "days") + 1;
+    let nbreJoursSemestreDeux =
+      semestreDeuxFin.diff(semestreDeuxDepart, "days") + 1;
+    let nbreJoursAnnee = nbreJoursSemestreUn + nbreJoursSemestreDeux;
+
+    AnneesAvecJoursParSemestres.push({
+      annee: mesAnnees[i],
+      joursSemestre1: nbreJoursSemestreUn,
+      joursSemestre2: nbreJoursSemestreDeux,
+      nbreJourAnnee: nbreJoursAnnee
+    });
+  }
+  AnneesAvecJoursParSemestres.push({
+    nbreJoursInterets: nbreJoursInterets,
+    dateDepart: depart_echeance,
+    dateFin: fin_echeance
+  });
+  //   console.log(AnneesAvecJoursParSemestres);
+  return AnneesAvecJoursParSemestres;
+};
+
+const getDateRangesWithInterestRatesMulti = (startDate, endDate) => {
+  let depart_echeance = moment(startDate, "DD/MM/YYYY", true);
+  let fin_echeance = moment(endDate, "DD/MM/YYYY", true);
+
+  let nbreAnneesDifferences = 0; // fin_echeance.diff(depart_echeance, "year");
+  let nbreJoursInterets = fin_echeance.diff(depart_echeance, "days") + 1;
+  // + 1 parce que le .diff de moments ne prends pas en compte le jour de depart dans le calcul entre deux dates
+
+  let regexAnnee = /(\d){4}/g;
+  let anneeDepart = parseInt(startDate.match(regexAnnee));
+  let anneeFin = parseInt(endDate.match(regexAnnee));
+  let mesAnnees = [anneeFin];
+  // for (i = 1; i < nbreAnneesDifferences + 1; i++) {
+  //   mesAnnees.push(anneeFin - i);
+  // }
+
+  let AnneesAvecJoursParSemestres = [];
+
+  for (let i = 0; i < mesAnnees.length; i++) {
     let semestreUnDepart = moment(`01/01/${mesAnnees[i]}`, "DD/MM/YYYY", true);
     let semestreUnFin = moment(`30/06/${mesAnnees[i]}`, "DD/MM/YYYY", true);
     let semestreDeuxDepart = moment(
@@ -186,7 +234,7 @@ const getCalculInteretsParAnnee = async (
   console.log(calculInterets);
 };
 
-getCalculInteretsTotal = (debut, fin) => {
+const getCalculInteretsTotal = (debut, fin) => {
   let debutMultiAnnees = moment(facture.echeance_facture, "DD/MM/YYYY", true);
   let finMultiAnnees = moment(dateFinCalculInterets, "DD/MM/YYYY", true);
   let anneeDebutMultiAnnees = parseInt(debutMultiAnnees.format("YYYY"));
@@ -196,22 +244,62 @@ getCalculInteretsTotal = (debut, fin) => {
     let nbreAnneesDifferences = finMultiAnnees.diff(debutMultiAnnees, "year");
     let mesAnnees = [anneeFinMultiAnnees];
 
-    for (i = 1; i < nbreAnneesDifferences + 1; i++) {
+    for (let i = 1; i < nbreAnneesDifferences + 1; i++) {
       mesAnnees.push(anneeFinMultiAnnees - i);
     }
 
-    let calcultJoursMultiAnnees = [];
+    console.log(mesAnnees);
 
-    for (i = 0; i < mesAnnees.length; i++) {
-      console.log(
-        getDateRangesWithInterestRates(
-          facture.echeance_facture,
-          dateFinCalculInterets
-        )
-      );
+    let calculMultiAnnees = [];
+
+    for (let i = 0; i < mesAnnees.length; i++) {
+      let dateDebut = "";
+      let dateFin = "";
+      let regExJours = /(\d{2})\//g;
+      let joursDebut = facture.echeance_facture.match(regExJours).join("");
+      let joursFin = dateFinCalculInterets.match(regExJours).join("");
+
+      if (anneeFinMultiAnnees === mesAnnees[i]) {
+        let annee = mesAnnees[i].toString();
+        dateDebut = `01/01/${annee}`;
+        dateFin = `${joursFin}${annee}`;
+        // console.log(getDateRangesWithInterestRatesMulti(dateDebut, dateFin));
+        console.log("annee fin", mesAnnees[i]);
+        calculMultiAnnees.push(
+          getDateRangesWithInterestRatesMulti(dateDebut, dateFin)
+        );
+        console.log(getDateRangesWithInterestRatesMulti(dateDebut, dateFin));
+        console.log(dateDebut, dateFin);
+      } else if (
+        anneeDebutMultiAnnees !== mesAnnees[i] &&
+        anneeFinMultiAnnees !== mesAnnees[i]
+      ) {
+        let annee = mesAnnees[i].toString();
+        dateDebut = `01/01/${annee}`;
+        dateFin = `31/12/${annee}`;
+        console.log("annee milieu", mesAnnees[i]);
+        calculMultiAnnees.push(
+          getDateRangesWithInterestRatesMulti(dateDebut, dateFin)
+        );
+        console.log(getDateRangesWithInterestRatesMulti(dateDebut, dateFin));
+        // console.log(dateDebut, dateFin);
+      } else if (anneeDebutMultiAnnees === mesAnnees[i]) {
+        let annee = mesAnnees[i].toString();
+        dateDebut = `${joursDebut}${annee}`;
+        dateFin = `31/12/${annee}`;
+        console.log("annee debut", mesAnnees[i]);
+        console.log(dateDebut, dateFin);
+        calculMultiAnnees.push(
+          getDateRangesWithInterestRatesMulti(dateDebut, dateFin)
+        );
+        console.log(getDateRangesWithInterestRatesMulti(dateDebut, dateFin));
+      } else {
+        console.log("pouet");
+      }
+      //   console.log(calculMultiAnnees);
     }
 
-    console.log(mesAnnees);
+    // console.log(calculMultiAnnees);
 
     //     let finSemestre1 = moment(`30/06/${anneeDebut}`, "DD/MM/YYYY", true);
     //     let finSemestre2 = moment(`31/12/${anneeDebut}`, "DD/MM/YYYY", true);
