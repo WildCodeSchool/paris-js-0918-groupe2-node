@@ -6,7 +6,7 @@ moment().format();
 
 const facture = {
   montant_ttc: 10268,
-  echeance_facture: "01/01/2016"
+  echeance_facture: "12/01/2012"
 };
 
 const mesAcomptes = [
@@ -27,7 +27,7 @@ const mesAvoirs = [
   })
 ];
 
-const dateFinCalculInterets = "30/06/2016";
+const dateFinCalculInterets = "12/12/2012";
 const points = 10;
 
 const getTotalCreance = (facture, acomptes, avoirs) => {
@@ -47,11 +47,13 @@ const getTotalCreance = (facture, acomptes, avoirs) => {
 const totalCreance = getTotalCreance(facture, mesAcomptes, mesAvoirs);
 
 const getDateRangesWithInterestRates = (startDate, endDate) => {
-  let depart_echeance = moment(startDate, "DD/MM/YYYY", true);
+  let depart_echeance = moment(startDate, "DD/MM/YYYY", true).add(1, "days");
+  // add 1 day parce que date de calcul des interets commence le lendemain de la date d'echeance
   let fin_echeance = moment(endDate, "DD/MM/YYYY", true);
 
   let nbreAnneesDifferences = fin_echeance.diff(depart_echeance, "year");
   let nbreJoursInterets = fin_echeance.diff(depart_echeance, "days") + 1;
+  // + 1 parce que le .diff de moments ne prends pas en compte le jour de depart dans le calcul entre deux dates
 
   let regexAnnee = /(\d){4}/g;
   let anneeDepart = parseInt(startDate.match(regexAnnee));
@@ -89,7 +91,6 @@ const getDateRangesWithInterestRates = (startDate, endDate) => {
     dateDepart: depart_echeance,
     dateFin: fin_echeance
   });
-  console.log(AnneesAvecJoursParSemestres);
   return AnneesAvecJoursParSemestres;
 };
 
@@ -123,14 +124,15 @@ const getCalculInteretsParSemestre = async (
   let mySemestre;
   if (semestre === 1) {
     mySemestre = "-01-01";
-  } else {
-    mySemestre = "-01-07";
+  } else if (semestre === 2) {
+    mySemestre = "-07-01";
   }
 
   const BCErate = await getBCErates(
     `${annee}${mySemestre}`,
     `${annee}${mySemestre}`
   ).then(res => {
+    console.log("Tx Interet: " + res);
     let jourSurAnnee = nbreJoursInterets / totalJoursAnnee;
     let tauxBCEEtPoint = (res + points) / 100;
     let calcul_interets_periode = totalCreance * jourSurAnnee * tauxBCEEtPoint;
@@ -140,11 +142,44 @@ const getCalculInteretsParSemestre = async (
       nbre_jours_comptabilises: nbreJoursInterets,
       interets_periode: calcul_interets_periode
     });
-    // console.log(nbreJoursInterets);
   });
   console.log(calculInterets);
-  //   console.log(BCErate);
-  // boucle for qui itere sur chaque semestre a reculon?
+};
+
+const getCalculInteretsParAnnee = async (
+  totalCreance,
+  nbreJoursInterets,
+  totalJoursAnnee,
+  annee,
+  semestre,
+  points,
+  debut,
+  fin
+) => {
+  const calculInterets = [];
+  let mySemestre;
+  if (semestre === 1) {
+    mySemestre = "-01-01";
+  } else if (semestre === 2) {
+    mySemestre = "-07-01";
+  }
+
+  const BCErate = await getBCErates(
+    `${annee}${mySemestre}`,
+    `${annee}${mySemestre}`
+  ).then(res => {
+    let jourSurAnnee = (nbreJoursInterets + 1) / totalJoursAnnee;
+    let tauxBCEEtPoint = (res + points) / 100;
+    let calcul_interets_periode = totalCreance * jourSurAnnee * tauxBCEEtPoint;
+    calculInterets.push({
+      date_debut: debut.format("DD/MM/YYYY"),
+      date_fin: fin.format("DD/MM/YYYY"),
+      nbre_jours_comptabilises: nbreJoursInterets + 1,
+      interets_periode: calcul_interets_periode,
+      taux_interet_applique: res
+    });
+  });
+  console.log(calculInterets);
 };
 
 getCalculInteretsTotal = (debut, fin) => {
@@ -152,23 +187,63 @@ getCalculInteretsTotal = (debut, fin) => {
   let anneeFin = parseInt(fin.format("YYYY"));
   // si creance sur la meme annee
   if (anneeDebut === anneeFin) {
+    let finSemestre1 = moment(`30/06/${anneeDebut}`, "DD/MM/YYYY", true);
+    let finSemestre2 = moment(`31/12/${anneeDebut}`, "DD/MM/YYYY", true);
+    let debutSemestre2 = moment(`01/07/${anneeDebut}`, "DD/MM/YYYY", true);
+    let nbreJoursSemestre1 = finSemestre1.diff(debut, "days");
+    let nbreJoursSemestre2 = fin.diff(debutSemestre2, "days");
     let moisDebut = parseInt(debut.format("MM"));
     let moisFin = parseInt(fin.format("MM"));
-    let semestre = 2;
+    let semestre = 0;
     // si creance sur un seul semestre
     if (moisDebut < 7 && moisFin < 7) {
       semestre = 1;
+      getCalculInteretsParSemestre(
+        totalCreance,
+        nbreJoursInterets[1].nbreJoursInterets,
+        nbreJoursInterets[0].nbreJourAnnee,
+        anneeDebut,
+        semestre,
+        points,
+        debut,
+        fin
+      );
+    } else if (moisDebut > 6 && moisFin > 6) {
+      semestre = 2;
+      getCalculInteretsParSemestre(
+        totalCreance,
+        nbreJoursInterets[1].nbreJoursInterets,
+        nbreJoursInterets[0].nbreJourAnnee,
+        anneeDebut,
+        semestre,
+        points,
+        debut,
+        fin
+      );
+    } else if (moisDebut < 7 && moisFin > 6) {
+      semestre = 1;
+      getCalculInteretsParAnnee(
+        totalCreance,
+        nbreJoursSemestre1,
+        nbreJoursInterets[0].nbreJourAnnee,
+        nbreJoursInterets[0].annee,
+        semestre,
+        points,
+        debut,
+        finSemestre1
+      );
+      semestre = 2;
+      getCalculInteretsParAnnee(
+        totalCreance,
+        nbreJoursSemestre2,
+        nbreJoursInterets[0].nbreJourAnnee,
+        nbreJoursInterets[0].annee,
+        semestre,
+        points,
+        debutSemestre2,
+        fin
+      );
     }
-    getCalculInteretsParSemestre(
-      totalCreance,
-      nbreJoursInterets[1].nbreJoursInterets,
-      nbreJoursInterets[0].nbreJourAnnee,
-      nbreJoursInterets[0].annee,
-      semestre,
-      points,
-      debut,
-      fin
-    );
   }
 };
 
