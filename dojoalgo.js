@@ -110,9 +110,6 @@ const getDateRangesWithInterestRatesMulti = (startDate, endDate) => {
   let anneeDepart = parseInt(startDate.match(regexAnnee));
   let anneeFin = parseInt(endDate.match(regexAnnee));
   let mesAnnees = [anneeFin];
-  // for (i = 1; i < nbreAnneesDifferences + 1; i++) {
-  //   mesAnnees.push(anneeFin - i);
-  // }
 
   let AnneesAvecJoursParSemestres = [];
 
@@ -268,8 +265,6 @@ const getCalculInteretsTotal = (debut, fin) => {
         calculMultiAnnees.push(
           getDateRangesWithInterestRatesMulti(dateDebut, dateFin)
         );
-        console.log(getDateRangesWithInterestRatesMulti(dateDebut, dateFin));
-        console.log(dateDebut, dateFin);
       } else if (
         anneeDebutMultiAnnees !== mesAnnees[i] &&
         anneeFinMultiAnnees !== mesAnnees[i]
@@ -281,8 +276,6 @@ const getCalculInteretsTotal = (debut, fin) => {
         calculMultiAnnees.push(
           getDateRangesWithInterestRatesMulti(dateDebut, dateFin)
         );
-        console.log(getDateRangesWithInterestRatesMulti(dateDebut, dateFin));
-        // console.log(dateDebut, dateFin);
       } else if (anneeDebutMultiAnnees === mesAnnees[i]) {
         let annee = mesAnnees[i].toString();
         dateDebut = `${joursDebut}${annee}`;
@@ -292,14 +285,12 @@ const getCalculInteretsTotal = (debut, fin) => {
         calculMultiAnnees.push(
           getDateRangesWithInterestRatesMulti(dateDebut, dateFin)
         );
-        console.log(getDateRangesWithInterestRatesMulti(dateDebut, dateFin));
       } else {
         console.log("pouet");
       }
-      //   console.log(calculMultiAnnees);
     }
 
-    // console.log(calculMultiAnnees);
+    console.log(calculMultiAnnees);
 
     //     let finSemestre1 = moment(`30/06/${anneeDebut}`, "DD/MM/YYYY", true);
     //     let finSemestre2 = moment(`31/12/${anneeDebut}`, "DD/MM/YYYY", true);
