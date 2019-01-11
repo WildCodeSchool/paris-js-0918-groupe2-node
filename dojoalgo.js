@@ -181,7 +181,6 @@ const getCalculInteretsParSemestre = async (
     `${annee}${mySemestre}`,
     `${annee}${mySemestre}`
   ).then(res => {
-    console.log("Tx Interet: " + res);
     let jourSurAnnee = nbreJoursInterets / totalJoursAnnee;
     let tauxBCEEtPoint = (res + points) / 100;
     let calcul_interets_periode = totalCreance * jourSurAnnee * tauxBCEEtPoint;
@@ -189,7 +188,8 @@ const getCalculInteretsParSemestre = async (
       date_debut: debut.format("DD/MM/YYYY"),
       date_fin: fin.format("DD/MM/YYYY"),
       nbre_jours_comptabilises: nbreJoursInterets,
-      interets_periode: calcul_interets_periode
+      interets_periode: calcul_interets_periode,
+      taux_interet_applique: res
     });
   });
   console.log(calculInterets);
@@ -238,7 +238,9 @@ const getCalculInteretsTotal = (debut, fin) => {
   let anneeFinMultiAnnees = parseInt(finMultiAnnees.format("YYYY"));
 
   if (anneeDebutMultiAnnees !== anneeFinMultiAnnees) {
-    let nbreAnneesDifferences = finMultiAnnees.diff(debutMultiAnnees, "year");
+    let nbreAnneesDifferences =
+      finMultiAnnees.diff(debutMultiAnnees, "year") + 1;
+    console.log(nbreAnneesDifferences);
     let mesAnnees = [anneeFinMultiAnnees];
 
     for (let i = 1; i < nbreAnneesDifferences + 1; i++) {
