@@ -6,7 +6,7 @@ moment().format();
 
 const facture = {
   montant_ttc: 10268,
-  echeance_facture: "12/09/2012"
+  echeance_facture: "12/09/2011"
 };
 
 const mesAcomptes = [
@@ -245,7 +245,6 @@ const getCalculInteretsTotal = (debut, fin) => {
   if (anneeDebutMultiAnnees !== anneeFinMultiAnnees) {
     let nbreAnneesDifferences =
       finMultiAnnees.diff(debutMultiAnnees, "year") + 1;
-    console.log(nbreAnneesDifferences);
     let mesAnnees = [anneeFinMultiAnnees];
 
     for (let i = 1; i < nbreAnneesDifferences + 1; i++) {
