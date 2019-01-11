@@ -36,9 +36,8 @@ module.exports = {
           .then(creancier => creancier.addAction(action));
         debiteur
           .findOne({ where: { id: req.body.debiteurId } })
-          .then(debiteur =>
-            debiteur.addAction(action).then(() => res.status(201).send())
-          );
+          .then(debiteur => debiteur.addAction(action));
+        res.status(201).send(action);
       })
       .catch(error => res.status(400).send(error));
   },
