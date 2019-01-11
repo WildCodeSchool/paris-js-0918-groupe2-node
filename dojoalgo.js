@@ -182,22 +182,22 @@ const getCalculInteretsParSemestre = async (
     mySemestre = "-07-01";
   }
 
-  const BCErate = await getBCErates(
-    `${annee}${mySemestre}`,
-    `${annee}${mySemestre}`
-  ).then(res => {
-    let jourSurAnnee = nbreJoursInterets / totalJoursAnnee;
-    let tauxBCEEtPoint = (res + points) / 100;
-    let calcul_interets_periode = totalCreance * jourSurAnnee * tauxBCEEtPoint;
-    calculInterets.push({
-      date_debut: debut.format("DD/MM/YYYY"),
-      date_fin: fin.format("DD/MM/YYYY"),
-      nbre_jours_comptabilises: nbreJoursInterets,
-      interets_periode: calcul_interets_periode,
-      taux_interet_applique: res
-    });
-  });
-  console.log(calculInterets);
+  await getBCErates(`${annee}${mySemestre}`, `${annee}${mySemestre}`).then(
+    res => {
+      let jourSurAnnee = nbreJoursInterets / totalJoursAnnee;
+      let tauxBCEEtPoint = (res + points) / 100;
+      let calcul_interets_periode =
+        totalCreance * jourSurAnnee * tauxBCEEtPoint;
+      calculInterets.push({
+        date_debut: debut.format("DD/MM/YYYY"),
+        date_fin: fin.format("DD/MM/YYYY"),
+        nbre_jours_comptabilises: nbreJoursInterets,
+        interets_periode: calcul_interets_periode,
+        taux_interet_applique: res
+      });
+    }
+  );
+  return calculInterets;
 };
 
 const getCalculInteretsParAnnee = async (
@@ -218,25 +218,26 @@ const getCalculInteretsParAnnee = async (
     mySemestre = "-07-01";
   }
 
-  const BCErate = await getBCErates(
-    `${annee}${mySemestre}`,
-    `${annee}${mySemestre}`
-  ).then(res => {
-    let jourSurAnnee = (nbreJoursInterets + 1) / totalJoursAnnee;
-    let tauxBCEEtPoint = (res + points) / 100;
-    let calcul_interets_periode = totalCreance * jourSurAnnee * tauxBCEEtPoint;
-    calculInterets.push({
-      date_debut: debut.format("DD/MM/YYYY"),
-      date_fin: fin.format("DD/MM/YYYY"),
-      nbre_jours_comptabilises: nbreJoursInterets + 1,
-      interets_periode: calcul_interets_periode,
-      taux_interet_applique: res
-    });
-  });
-  console.log(calculInterets);
+  await getBCErates(`${annee}${mySemestre}`, `${annee}${mySemestre}`).then(
+    res => {
+      let jourSurAnnee = (nbreJoursInterets + 1) / totalJoursAnnee;
+      let tauxBCEEtPoint = (res + points) / 100;
+      let calcul_interets_periode =
+        totalCreance * jourSurAnnee * tauxBCEEtPoint;
+      calculInterets.push({
+        date_debut: debut.format("DD/MM/YYYY"),
+        date_fin: fin.format("DD/MM/YYYY"),
+        nbre_jours_comptabilises: nbreJoursInterets + 1,
+        interets_periode: calcul_interets_periode,
+        taux_interet_applique: res
+      });
+    }
+  );
+  return calculInterets;
 };
 
-const getCalculInteretsTotal = (debut, fin) => {
+const getCalculInteretsTotal = async (debut, fin, ) => {
+  let finalResult = [];
   let debutMultiAnnees = moment(facture.echeance_facture, "DD/MM/YYYY", true);
   let finMultiAnnees = moment(dateFinCalculInterets, "DD/MM/YYYY", true);
   let anneeDebutMultiAnnees = parseInt(debutMultiAnnees.format("YYYY"));
@@ -323,52 +324,62 @@ const getCalculInteretsTotal = (debut, fin) => {
       // console.log(calculMultiAnnees[i][1].nbreJoursInterets);
 
       // si creance sur un seul semestre
+      
+
       if (moisDebut < 7 && moisFin < 7) {
         semestre = 1;
-        getCalculInteretsParSemestre(
-          totalCreance,
-          calculMultiAnnees[i][1].nbreJoursInterets,
-          calculMultiAnnees[i][0].nbreJourAnnee,
-          anneeDebut,
-          semestre,
-          points,
-          debut,
-          fin
+        finalResult.push(
+          await getCalculInteretsParSemestre(
+            totalCreance,
+            calculMultiAnnees[i][1].nbreJoursInterets,
+            calculMultiAnnees[i][0].nbreJourAnnee,
+            anneeDebut,
+            semestre,
+            points,
+            debut,
+            fin
+          )
         );
       } else if (moisDebut > 6 && moisFin > 6) {
         semestre = 2;
-        getCalculInteretsParSemestre(
-          totalCreance,
-          calculMultiAnnees[i][1].nbreJoursInterets,
-          calculMultiAnnees[i][0].nbreJourAnnee,
-          anneeDebut,
-          semestre,
-          points,
-          debut,
-          fin
+        finalResult.push(
+          await getCalculInteretsParSemestre(
+            totalCreance,
+            calculMultiAnnees[i][1].nbreJoursInterets,
+            calculMultiAnnees[i][0].nbreJourAnnee,
+            anneeDebut,
+            semestre,
+            points,
+            debut,
+            fin
+          )
         );
       } else if (moisDebut < 7 && moisFin > 6) {
         semestre = 1;
-        getCalculInteretsParAnnee(
-          totalCreance,
-          nbreJoursSemestre1,
-          calculMultiAnnees[i][0].nbreJourAnnee,
-          calculMultiAnnees[i][0].annee,
-          semestre,
-          points,
-          debut,
-          finSemestre1
+        finalResult.push(
+          await getCalculInteretsParAnnee(
+            totalCreance,
+            nbreJoursSemestre1,
+            calculMultiAnnees[i][0].nbreJourAnnee,
+            calculMultiAnnees[i][0].annee,
+            semestre,
+            points,
+            debut,
+            finSemestre1
+          )
         );
         semestre = 2;
-        getCalculInteretsParAnnee(
-          totalCreance,
-          nbreJoursSemestre2,
-          calculMultiAnnees[i][0].nbreJourAnnee,
-          calculMultiAnnees[i][0].annee,
-          semestre,
-          points,
-          debutSemestre2,
-          fin
+        finalResult.push(
+          await getCalculInteretsParAnnee(
+            totalCreance,
+            nbreJoursSemestre2,
+            calculMultiAnnees[i][0].nbreJourAnnee,
+            calculMultiAnnees[i][0].annee,
+            semestre,
+            points,
+            debutSemestre2,
+            fin
+          )
         );
       }
     }
@@ -386,56 +397,66 @@ const getCalculInteretsTotal = (debut, fin) => {
     // si creance sur un seul semestre
     if (moisDebut < 7 && moisFin < 7) {
       semestre = 1;
-      getCalculInteretsParSemestre(
-        totalCreance,
-        nbreJoursInterets[1].nbreJoursInterets,
-        nbreJoursInterets[0].nbreJourAnnee,
-        anneeDebut,
-        semestre,
-        points,
-        debut,
-        fin
+      finalResult.push(
+        await getCalculInteretsParSemestre(
+          totalCreance,
+          nbreJoursInterets[1].nbreJoursInterets,
+          nbreJoursInterets[0].nbreJourAnnee,
+          anneeDebut,
+          semestre,
+          points,
+          debut,
+          fin
+        )
       );
     } else if (moisDebut > 6 && moisFin > 6) {
       semestre = 2;
-      getCalculInteretsParSemestre(
-        totalCreance,
-        nbreJoursInterets[1].nbreJoursInterets,
-        nbreJoursInterets[0].nbreJourAnnee,
-        anneeDebut,
-        semestre,
-        points,
-        debut,
-        fin
+      finalResult.push(
+        await getCalculInteretsParSemestre(
+          totalCreance,
+          nbreJoursInterets[1].nbreJoursInterets,
+          nbreJoursInterets[0].nbreJourAnnee,
+          anneeDebut,
+          semestre,
+          points,
+          debut,
+          fin
+        )
       );
     } else if (moisDebut < 7 && moisFin > 6) {
       semestre = 1;
-      getCalculInteretsParAnnee(
-        totalCreance,
-        nbreJoursSemestre1,
-        nbreJoursInterets[0].nbreJourAnnee,
-        nbreJoursInterets[0].annee,
-        semestre,
-        points,
-        debut,
-        finSemestre1
+      finalResult.push(
+        await getCalculInteretsParAnnee(
+          totalCreance,
+          nbreJoursSemestre1,
+          nbreJoursInterets[0].nbreJourAnnee,
+          nbreJoursInterets[0].annee,
+          semestre,
+          points,
+          debut,
+          finSemestre1
+        )
       );
       semestre = 2;
-      getCalculInteretsParAnnee(
-        totalCreance,
-        nbreJoursSemestre2,
-        nbreJoursInterets[0].nbreJourAnnee,
-        nbreJoursInterets[0].annee,
-        semestre,
-        points,
-        debutSemestre2,
-        fin
+     finalResult.push(
+        await getCalculInteretsParAnnee(
+          totalCreance,
+          nbreJoursSemestre2,
+          nbreJoursInterets[0].nbreJourAnnee,
+          nbreJoursInterets[0].annee,
+          semestre,
+          points,
+          debutSemestre2,
+          fin
+        )
       );
     }
+    
   }
+  return finalResult;
 };
 
 getCalculInteretsTotal(
   nbreJoursInterets[1].dateDepart,
   nbreJoursInterets[1].dateFin
-);
+).then(res => console.log(res))
