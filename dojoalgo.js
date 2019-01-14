@@ -6,7 +6,7 @@ moment().format();
 
 const facture = {
   montant_ttc: 10268,
-  echeance_facture: "12/09/2011"
+  echeance_facture: "12/01/2012"
 };
 
 const mesAcomptes = [
@@ -28,7 +28,7 @@ const mesAvoirs = [
 ];
 
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE (A RECUP DE LA BDD)
-const dateFinCalculInterets = "20/05/2013";
+const dateFinCalculInterets = "31/12/2012";
 
 // POINTS EN % A RAJOUTER AU TAUX DE LA BCE
 const points = 10;
@@ -236,7 +236,7 @@ const getCalculInteretsParAnnee = async (
   return calculInterets;
 };
 
-const getCalculInteretsTotal = async (debut, fin, ) => {
+const getCalculInteretsTotal = async (debut, fin) => {
   let finalResult = [];
   let debutMultiAnnees = moment(facture.echeance_facture, "DD/MM/YYYY", true);
   let finMultiAnnees = moment(dateFinCalculInterets, "DD/MM/YYYY", true);
@@ -324,7 +324,6 @@ const getCalculInteretsTotal = async (debut, fin, ) => {
       // console.log(calculMultiAnnees[i][1].nbreJoursInterets);
 
       // si creance sur un seul semestre
-      
 
       if (moisDebut < 7 && moisFin < 7) {
         semestre = 1;
@@ -438,7 +437,7 @@ const getCalculInteretsTotal = async (debut, fin, ) => {
         )
       );
       semestre = 2;
-     finalResult.push(
+      finalResult.push(
         await getCalculInteretsParAnnee(
           totalCreance,
           nbreJoursSemestre2,
@@ -451,7 +450,6 @@ const getCalculInteretsTotal = async (debut, fin, ) => {
         )
       );
     }
-    
   }
   return finalResult;
 };
@@ -459,4 +457,4 @@ const getCalculInteretsTotal = async (debut, fin, ) => {
 getCalculInteretsTotal(
   nbreJoursInterets[1].dateDepart,
   nbreJoursInterets[1].dateFin
-).then(res => console.log(res))
+).then(res => console.log(res));
