@@ -35,12 +35,8 @@ doc.setData({
   montant_avoir: "",
   date_avoir: "",
   montant_total_interets: "",
-  loi_entreprise_française: ""
-  //  Art. L 441-6 du Code de commerce : "Sauf disposition contraire qui ne peut toutefois fixer un taux
-  //  inférieur à trois fois le tauxd'intérêt légal, ce taux est égal au taux d'intérêt appliqué par la BCE majoré de 10 points
-  //  de pourcentage (...) Les pénalités de retard  sont  exigibles  sans  qu'un  rappel  soit  nécessaire."  /  Décret  n°  2012-1115
-  //  du  2  octobre  2012  "A  compter  du  1er  janvier 2013, tout professionnel en situation de retard de paiement devient de plein
-  //  droit débiteur, à l'égard de son créancier, (...) d'une indemnité forfaitaire pour frais de recouvrement de 40 euros."
+  loi_entreprise_française:
+    " Art. L 441-6 du Code de commerce : Sauf disposition contraire qui ne peut toutefois fixer un taux inférieur à trois fois le tauxd'intérêt légal, ce taux est égal au taux d'intérêt appliqué par la BCE majoré de 10 points de pourcentage (...) Les pénalités de retard  sont  exigibles  sans  qu'un  rappel  soit  nécessaire.  /  Décret  n°  2012-1115 du  2  octobre  2012  A  compter  du  1er  janvier 2013, tout professionnel en situation de retard de paiement devient de plein droit débiteur, à l'égard de son créancier, (...) d'une indemnité forfaitaire pour frais de recouvrement de 40 euros."
 });
 
 // debtor's name for the filename

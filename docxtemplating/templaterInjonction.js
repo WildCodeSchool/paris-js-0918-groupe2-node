@@ -83,13 +83,16 @@ doc.setData({
   paiement_a_la_livraison: "",
   //  "{denomination_sociale_debiteur} devait payer l’intégralité au plus tard à la livraison.
   // Or, pour ne pas la mettre en difficulté, {denomination_sociale_crediteur} lui a fait confiance et lui a "
-  totalite_marchandise: "", // "livré la totalité de la marchandise"
-  totalite_prestation: "", // "fourni la totalité des prestations"
+  totalite_marchandise: "livré la totalité de la marchandise",
+  totalite_prestation: "fourni la totalité des prestations",
   date_mise_en_demeure: "",
-  entreprise_française: "", // "Application du taux de refinancement de la BCE + 10 points"
-  entreprise_italienne: "", // Application du taux de refinancement de la BCE + 8 points
-  loi_entreprise_française: "", // "Article L441-6 du code de commerce"
-  loi_entreprise_italienne: "", // "Décret législatif italien du 9 novembre 2012 n°192"
+  entreprise_française:
+    "Application du taux de refinancement de la BCE + 10 points",
+  entreprise_italienne:
+    "Application du taux de refinancement de la BCE + 8 points",
+  loi_entreprise_française: "Article L441-6 du code de commerce",
+  loi_entreprise_italienne:
+    "Décret législatif italien du 9 novembre 2012 n°192",
   frais_accessoire: "",
   honoraires_HT: "",
   honoraires_TTC: "",
@@ -97,8 +100,8 @@ doc.setData({
   ville_TC_Opposition: "",
   numero_commande: "",
   numero_document_transport: "",
-  points_entreprise_française: "", // "de la BCE + 10 points"
-  points_entreprise_italienne: "" // "de la BCE + 8 points"
+  points_entreprise_française: "de la BCE + 10 points",
+  points_entreprise_italienne: "de la BCE + 8 points"
 });
 
 // debtor's name for the filename
