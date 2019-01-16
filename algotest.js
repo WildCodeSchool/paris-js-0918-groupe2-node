@@ -5,10 +5,10 @@ moment().format();
 // DONNEES CONCERNANT UNE FACTURE SPECIFIQUE (A RECUP DE LA BDD)
 
 
-// const facture = {
-//   montant_ttc: 10268,
-//   echeance_facture: "12/09/2011"
-// };
+const facture = {
+  montant_ttc: 10268,
+  echeance_facture: "12/09/2011"
+};
 
 // const mesAcomptes = [
 //   acompte1 = {
@@ -51,16 +51,16 @@ const truc = async () => {
 
   }))
 
-   facture = {
-    montant_ttc: 10268,
-    echeance_facture: "12/09/2011"
-  }
+//    facture = {
+//     montant_ttc: 10268,
+//     echeance_facture: "12/09/2011"
+//   }
 // console.log(JSON.stringify(test.data.date_facture))
-  return facture
+//   return facture
 }
 truc()
 
-console.log(facture)
+// console.log(facture)
 
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE (A RECUP DE LA BDD)
 const dateFinCalculInterets = "20/05/2013";

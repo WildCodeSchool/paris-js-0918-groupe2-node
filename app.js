@@ -9,6 +9,7 @@ const fs = require("fs");
 const upload = multer({ dest: "tmp/" });
 const path = require("path");
 const models = require("./models");
+const algo = require('./algotest')
 // const router = express.Router();
 
 // Gets all the controllers to be used
@@ -35,6 +36,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
+
+app.get('/aled', (req, res) => {
+  algo.getCalculInteretsTotal().then(result => {
+      res.json(result)
+  })
+})
 
 // CRUD routes for the Cabinet
 app.post("/api/cabinet", cabinetControllers.create);
