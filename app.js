@@ -9,6 +9,7 @@ const fs = require("fs");
 const upload = multer({ dest: "tmp/" });
 const path = require("path");
 const models = require("./models");
+// const algo = require('./algotest')
 // const router = express.Router();
 
 // Gets all the controllers to be used
@@ -36,26 +37,32 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+// app.get('/aled', (req, res) => {
+//   algo.getCalculInteretsTotal().then(result => {
+//       res.json(result)
+//   })
+// })
+
 // CRUD routes for the Cabinet
 app.post("/api/cabinet", cabinetControllers.create);
 app.get("/api/cabinet", cabinetControllers.list);
 app.put("/api/cabinet/:cabinetId", cabinetControllers.update);
 app.delete("/api/cabinet/:cabinetId", cabinetControllers.destroy);
-app.post(
-  "/dashboard/moncompte",
-  upload.array("signature", 2),
-  (req, res, next) => {
-    console.log(req.files);
-    for (f of req.files)
-      fs.rename(f.path, "public/images/" + f.originalname, function(err) {
-        if (err) {
-          res.send("problème durant le déplacement");
-        } else {
-          res.send("Fichier uploadé avec succès");
-        }
-      });
-  }
-);
+// app.post(
+//   "/dashboard/moncompte",
+//   upload.array("signature", 2),
+//   (req, res, next) => {
+//     console.log(req.files);
+//     for (f of req.files)
+//       fs.rename(f.path, "public/images/" + f.originalname, function(err) {
+//         if (err) {
+//           res.send("problème durant le déplacement");
+//         } else {
+//           res.send("Fichier uploadé avec succès");
+//         }
+//       });
+//   }
+// );
 
 // CRUD routes for the Creanciers
 app.post("/api/creanciers", creanciersController.create);
@@ -70,6 +77,7 @@ app.put("/api/debiteurs/:debiteurId", debiteursController.update);
 app.delete("/api/debiteurs/:debiteurId", debiteursController.destroy);
 
 // CRUD routes for the Factures
+app.get("/api/factures/:factureId", facturesController.get);
 app.get("/api/factures", facturesController.list);
 app.post("/api/factures", facturesController.create);
 app.put("/api/factures/:factureId", facturesController.update);
@@ -88,6 +96,7 @@ app.put("/api/acomptes/:acompteId", acomptesController.update);
 app.delete("/api/acomptes/:acompteId", acomptesController.destroy);
 
 // CRUD routes for the Actions
+app.get("/api/actions/:actionId/", actionsController.get);
 app.get("/api/actions", actionsController.list);
 app.post("/api/actions", actionsController.create);
 app.put("/api/actions/:actionId", actionsController.update);
