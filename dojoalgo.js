@@ -6,7 +6,7 @@ moment().format();
 
 const facture = {
   montant_ttc: 10268,
-  echeance_facture: "12/09/2011"
+  echeance_facture: "12/01/2012"
 };
 
 const mesAcomptes = [
@@ -28,7 +28,7 @@ const mesAvoirs = [
 ];
 
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE (A RECUP DE LA BDD)
-const dateFinCalculInterets = "20/05/2013";
+const dateFinCalculInterets = "12/05/2012";
 
 // POINTS EN % A RAJOUTER AU TAUX DE LA BCE
 const points = 10;
