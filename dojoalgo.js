@@ -28,7 +28,7 @@ const mesAvoirs = [
 ];
 
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE (A RECUP DE LA BDD)
-const dateFinCalculInterets = "12/05/2012";
+const dateFinCalculInterets = "31/12/2012";
 
 // POINTS EN % A RAJOUTER AU TAUX DE LA BCE
 const points = 10;
