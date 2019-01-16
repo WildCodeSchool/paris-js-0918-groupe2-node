@@ -6,15 +6,17 @@ moment().format();
 
 const facture = {
   montant_ttc: 10268,
-  echeance_facture: "12/01/2012"
+  echeance_facture: "01/01/2012"
 };
 
 const mesAcomptes = [
   (acompte1 = {
-    montant_ttc: 100
+    montant_ttc: 100,
+    date_acompte: "01/04/2012"
   }),
   (acompte2 = {
-    montant_ttc: 100
+    montant_ttc: 100,
+    date_acompte: "25/10/2012"
   })
 ];
 
@@ -27,8 +29,19 @@ const mesAvoirs = [
   })
 ];
 
+const mesPaiementsPartiels = [
+  (paiement1 = {
+    montant_ttc: 1000,
+    date_paiement: "01/04/2012"
+  }),
+  (paiement2 = {
+    montant_ttc: 1000,
+    date_paiement: "25/10/2012"
+  })
+];
+
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE (A RECUP DE LA BDD)
-const dateFinCalculInterets = "31/12/2012";
+const dateFinCalculInterets = "20/12/2012";
 
 // POINTS EN % A RAJOUTER AU TAUX DE LA BCE
 const points = 10;
@@ -44,6 +57,7 @@ const getTotalCreance = (facture, acomptes, avoirs) => {
     montantAcompte += acomptes[i].montant_ttc;
   }
   let totalCreance = montantFacture - montantAvoir - montantAcompte;
+  // let totalCreance = montantFacture - montantAvoir;
   return totalCreance;
 };
 
@@ -54,7 +68,7 @@ const getDateRangesWithInterestRates = (startDate, endDate) => {
   // add 1 day parce que date de calcul des interets commence le lendemain de la date d'echeance
   let fin_echeance = moment(endDate, "DD/MM/YYYY", true);
 
-  let nbreAnneesDifferences = fin_echeance.diff(depart_echeance, "year");
+  let nbreAnneesDifferences = fin_echeance.diff(depart_echeance, "year") + 1;
   let nbreJoursInterets = fin_echeance.diff(depart_echeance, "days") + 1;
   // + 1 parce que le .diff de moments ne prends pas en compte le jour de depart dans le calcul entre deux dates
 
@@ -62,7 +76,7 @@ const getDateRangesWithInterestRates = (startDate, endDate) => {
   let anneeDepart = parseInt(startDate.match(regexAnnee));
   let anneeFin = parseInt(endDate.match(regexAnnee));
   let mesAnnees = [anneeFin];
-  for (let i = 1; i < nbreAnneesDifferences + 1; i++) {
+  for (let i = 1; i < nbreAnneesDifferences; i++) {
     mesAnnees.push(anneeFin - i);
   }
 
@@ -152,6 +166,8 @@ const nbreJoursInterets = getDateRangesWithInterestRates(
   facture.echeance_facture,
   dateFinCalculInterets
 );
+
+console.log("yolo", nbreJoursInterets);
 
 const getBCErates = (startDate, endDate) => {
   return axios
@@ -244,14 +260,15 @@ const getCalculInteretsTotal = async (debut, fin) => {
   let anneeFinMultiAnnees = parseInt(finMultiAnnees.format("YYYY"));
 
   if (anneeDebutMultiAnnees !== anneeFinMultiAnnees) {
-    let nbreAnneesDifferences =
-      finMultiAnnees.diff(debutMultiAnnees, "year") + 1;
+    let nbreAnneesDifferences = anneeFinMultiAnnees - anneeDebutMultiAnnees + 1;
+
+    // console.log(nbreAnneesDifferences);
+
     let mesAnnees = [anneeFinMultiAnnees];
 
-    for (let i = 1; i < nbreAnneesDifferences + 1; i++) {
+    for (let i = 1; i < nbreAnneesDifferences; i++) {
       mesAnnees.push(anneeFinMultiAnnees - i);
     }
-
     // console.log(mesAnnees);
 
     let calculMultiAnnees = [];
@@ -267,6 +284,7 @@ const getCalculInteretsTotal = async (debut, fin) => {
         let annee = mesAnnees[i].toString();
         dateDebut = `01/01/${annee}`;
         dateFin = `${joursFin}${annee}`;
+        // console.log("anneeFinMultiAnnees === mesAnnees[i]", dateDebut, dateFin);
         // console.log(getDateRangesWithInterestRatesMulti(dateDebut, dateFin));
         // console.log("annee fin", mesAnnees[i]);
         calculMultiAnnees.push(
@@ -279,6 +297,11 @@ const getCalculInteretsTotal = async (debut, fin) => {
         let annee = mesAnnees[i].toString();
         dateDebut = `01/01/${annee}`;
         dateFin = `31/12/${annee}`;
+        // console.log(
+        //   "anneeDebutMultiAnnees !== mesAnnees[i] && anneeFinMultiAnnees !== mesAnnees[i]",
+        //   dateDebut,
+        //   dateFin
+        // );
         // console.log("annee milieu", mesAnnees[i]);
         calculMultiAnnees.push(
           getDateRangesWithInterestRatesMulti(dateDebut, dateFin)
@@ -287,6 +310,11 @@ const getCalculInteretsTotal = async (debut, fin) => {
         let annee = mesAnnees[i].toString();
         dateDebut = `${joursDebut}${annee}`;
         dateFin = `31/12/${annee}`;
+        // console.log(
+        //   "anneeDebutMultiAnnees === mesAnnees[i]",
+        //   dateDebut,
+        //   dateFin
+        // );
         // console.log("annee debut", mesAnnees[i]);
         // console.log(dateDebut, dateFin);
         calculMultiAnnees.push(
