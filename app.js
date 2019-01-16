@@ -70,6 +70,7 @@ app.put("/api/debiteurs/:debiteurId", debiteursController.update);
 app.delete("/api/debiteurs/:debiteurId", debiteursController.destroy);
 
 // CRUD routes for the Factures
+app.get("/api/factures/:factureId", facturesController.get)
 app.get("/api/factures", facturesController.list);
 app.post("/api/factures", facturesController.create);
 app.put("/api/factures/:factureId", facturesController.update);
@@ -88,6 +89,7 @@ app.put("/api/acomptes/:acompteId", acomptesController.update);
 app.delete("/api/acomptes/:acompteId", acomptesController.destroy);
 
 // CRUD routes for the Actions
+app.get("/api/actions/:actionId/", actionsController.get)
 app.get("/api/actions", actionsController.list);
 app.post("/api/actions", actionsController.create);
 app.put("/api/actions/:actionId", actionsController.update);

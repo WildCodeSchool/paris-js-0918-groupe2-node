@@ -1,4 +1,5 @@
 const action = require("../models").action;
+const models = require("../models")
 const creancier = require("../models").creancier;
 const debiteur = require("../models").debiteur;
 
@@ -40,6 +41,16 @@ module.exports = {
         res.status(201).send(action);
       })
       .catch(error => res.status(400).send(error));
+  },
+  get(req, res){
+    return action
+    .findOne({ 
+      where: { id: req.params.actionId},
+      include: [{
+        model : models.facture,
+      }]
+    })
+    .then(actions => res.status(200).send(actions))
   },
   update(req, res) {
     return action
