@@ -20,7 +20,9 @@ const facturesController = require("./controllers").factures;
 const avoirsController = require("./controllers").avoirs;
 const acomptesController = require("./controllers").acomptes;
 const actionsController = require("./controllers").actions;
-const documentsController = require("./controllers").documents;
+const medController = require("./controllers").med;
+const injonctionController = require("./controllers").injonction;
+const recapController = require("./controllers").recap;
 
 // Set up the express app
 const app = express();
@@ -105,7 +107,9 @@ app.delete("/api/actions/:actionId", actionsController.destroy);
 
 
 // Documents creation 
-app.get("/api/documents/createFormalNotice/:id/", documentsController.createFormalNotice);
+app.get("/api/documents/createMed/:id/", medController.createMed);
+app.get("/api/documents/createInjonction/:id/", injonctionController.createInjonction);
+app.get("/api/documents/createRecap/:id/", recapController.createRecap);
 
 // Setup of a default catch-all route that sends back a message in JSON format.
 app.get("/", (req, res) =>

@@ -24,21 +24,21 @@ doc.loadZip(zip);
 
 //set the templateVariables
 doc.setData({
-  denomination_sociale_creancier: req.body.denomination_sociale_creancier,
-  denomination_sociale_debiteur: req.body.denomination_sociale_debiteur,
-  numero_facture: req.body.numero_facture,
-  date_facture: req.body.date_facture,
-  montant_facture: req.body.montant_facture,
-  taux_BCE: req.body.taux_BCE,
-  points_entreprise_française: "", // taux BCE + 10 points
-  points_entreprise_italienne: "", // taux BCE + 8 points
-  date_debut: req.body.date_debut,
-  date_fin: req.body.date_fin,
-  nombre_jours_interets: req.body.nombre_jours_interets,
-  taux: req.body.taux,
-  montant_interets: req.body.montant_interets,
-  montant_acompte: req.body.montant_acompte,
-  date_reglement_acompte: req.body.date_reglement_acompte,
+  // denomination_sociale_creancier: req.body.denomination_sociale_creancier,
+  // denomination_sociale_debiteur: req.body.denomination_sociale_debiteur,
+  // numero_facture: req.body.numero_facture,
+  // date_facture: req.body.date_facture,
+  // montant_facture: req.body.montant_facture,
+  // taux_BCE: req.body.taux_BCE,
+  // points_entreprise_française: "", // taux BCE + 10 points
+  // points_entreprise_italienne: "", // taux BCE + 8 points
+  // date_debut: req.body.date_debut,
+  // date_fin: req.body.date_fin,
+  // nombre_jours_interets: req.body.nombre_jours_interets,
+  // taux: req.body.taux,
+  // montant_interets: req.body.montant_interets,
+  // montant_acompte: req.body.montant_acompte,
+  // date_reglement_acompte: req.body.date_reglement_acompte,
   montant_avoir: req.body.montant_avoir,
   date_avoir: req.body.date_avoir,
   montant_total_interets: req.body.montant_total_interets,
