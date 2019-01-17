@@ -6,7 +6,7 @@ moment().format();
 
 const facture = {
   montant_ttc: 10268,
-  echeance_facture: "12/01/2012"
+  echeance_facture: "12/07/2012"
 };
 
 const mesAcomptes = [
@@ -28,7 +28,7 @@ const mesAvoirs = [
 ];
 
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE (A RECUP DE LA BDD)
-const dateFinCalculInterets = "31/12/2012";
+const dateFinCalculInterets = "31/01/2013";
 
 // POINTS EN % A RAJOUTER AU TAUX DE LA BCE
 const points = 10;
@@ -244,8 +244,7 @@ const getCalculInteretsTotal = async (debut, fin) => {
   let anneeFinMultiAnnees = parseInt(finMultiAnnees.format("YYYY"));
 
   if (anneeDebutMultiAnnees !== anneeFinMultiAnnees) {
-    let nbreAnneesDifferences =
-      finMultiAnnees.diff(debutMultiAnnees, "year") + 1;
+    let nbreAnneesDifferences = finMultiAnnees.diff(debutMultiAnnees, "year");
     let mesAnnees = [anneeFinMultiAnnees];
 
     for (let i = 1; i < nbreAnneesDifferences + 1; i++) {
