@@ -7,6 +7,7 @@ moment().format();
 
 const facture = {
   montant_ttc: 10268,
+
   echeance_facture: "01/01/2012"
 };
 
