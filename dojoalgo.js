@@ -6,7 +6,9 @@ moment().format();
 
 const facture = {
   montant_ttc: 10268,
+
   echeance_facture: "01/01/2012"
+
 };
 
 const mesAcomptes = [
@@ -39,7 +41,9 @@ const mesPaiementsPartiels = [
 ];
 
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE (A RECUP DE LA BDD)
+
 const dateFinCalculInterets = "20/12/2014";
+
 
 // POINTS EN % A RAJOUTER AU TAUX DE LA BCE
 const points = 10;
@@ -272,12 +276,14 @@ const maSuperMetaFonction = async (
     return calculInterets;
   };
 
+
   const getCalculInteretsTotal = async (debut, fin) => {
     let finalResult = [];
     let debutMultiAnnees = moment(facture.echeance_facture, "DD/MM/YYYY", true);
     let finMultiAnnees = moment(dateFinCalculInterets, "DD/MM/YYYY", true);
     let anneeDebutMultiAnnees = parseInt(debutMultiAnnees.format("YYYY"));
     let anneeFinMultiAnnees = parseInt(finMultiAnnees.format("YYYY"));
+
 
     if (anneeDebutMultiAnnees !== anneeFinMultiAnnees) {
       let nbreAnneesDifferences =
