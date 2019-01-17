@@ -1,5 +1,6 @@
 const facture = require("../models").facture;
 const action = require("../models").action;
+const models = require("../models");
 
 module.exports = {
   list(req, res) {
@@ -31,6 +32,19 @@ module.exports = {
           );
       })
       .catch(error => res.status(400).send(error));
+  },
+  get(req, res) {
+    return facture
+      .findOne({
+        where: { id: req.params.factureId },
+        include: [
+          {
+            model: models.acompte
+          },
+          { model: models.avoir }
+        ]
+      })
+      .then(factures => res.status(200).send(factures));
   },
   update(req, res) {
     return facture
