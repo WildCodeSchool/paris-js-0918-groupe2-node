@@ -37,11 +37,11 @@ const mesPaiementsPartiels = [
   {
     montant_ttc: 1000,
     date_paiement: "25/10/2014"
-  },
-  {
-    montant_ttc: 1000,
-    date_paiement: "08/12/2014"
   }
+  // {
+  //   montant_ttc: 1000,
+  //   date_paiement: "08/12/2014"
+  // }
 ];
 
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE
@@ -255,7 +255,7 @@ const maSuperMetaFonction = async (
           calculInterets.push({
             date_debut: debut.format("DD/MM/YYYY"),
             date_fin: fin.format("DD/MM/YYYY"),
-            creance_a_ce_stade: totalCreance,
+            creance_sur_cette_periode: totalCreance,
             nbre_jours_comptabilises: nbreJoursInterets,
             interets_periode: calcul_interets_periode,
             taux_interet_applique: res
@@ -292,7 +292,7 @@ const maSuperMetaFonction = async (
           calculInterets.push({
             date_debut: debut.format("DD/MM/YYYY"),
             date_fin: fin.format("DD/MM/YYYY"),
-            creance_a_ce_stade: totalCreance,
+            creance_sur_cette_periode: totalCreance,
             nbre_jours_comptabilises: nbreJoursInterets + 1,
             interets_periode: calcul_interets_periode,
             taux_interet_applique: res
@@ -579,18 +579,20 @@ const maSuperMetaFonction = async (
             points
           )
         );
+        factureModif.montant_ttc =
+          factureModif.montant_ttc - mesPaiementsPartiels[i].montant_ttc;
         // Date dernier paiement partiel => date d'echeance globale
       } else if (i === nbrePaiementsPartiels - 1) {
         let facture2 = factureModif;
         facture2.echeance_facture = mesPaiementsPartiels[i - 1].date_paiement;
-        facture2.montant_ttc =
-          facture2.montant_ttc - mesPaiementsPartiels[i - 1].montant_ttc;
+        // facture2.montant_ttc =
+        //   facture2.montant_ttc - mesPaiementsPartiels[i - 1].montant_ttc;
         let dateDernierPaiementPartierMoins1Jour = moment(
           facture2.echeance_facture,
           "DD/MM/YYYY",
           true
         )
-          .subtract(1, "days")
+          // .subtract(1, "days")
           .format("DD/MM/YYYY");
         facture2.echeance_facture = dateDernierPaiementPartierMoins1Jour;
         result.push(
@@ -607,10 +609,8 @@ const maSuperMetaFonction = async (
         // console.log(i);
         let facture3 = factureModif;
         facture3.echeance_facture = mesPaiementsPartiels[i - 1].date_paiement;
-        facture3.montant_ttc =
-          facture3.montant_ttc - mesPaiementsPartiels[i - 1].montant_ttc;
-        factureModif.montant_ttc =
-          facture3.montant_ttc - mesPaiementsPartiels[i - 1].montant_ttc;
+        facture3.montant_ttc = factureModif.montant_ttc;
+
         // console.log(i, facture3.echeance_facture);
         let dateFinIntermediaire = mesPaiementsPartiels[i].date_paiement;
         // console.log(i + 1);
@@ -623,6 +623,8 @@ const maSuperMetaFonction = async (
             points
           )
         );
+        factureModif.montant_ttc =
+          factureModif.montant_ttc - mesPaiementsPartiels[i - 1].montant_ttc;
       }
     }
   }
