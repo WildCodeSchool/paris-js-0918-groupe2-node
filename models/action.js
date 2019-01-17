@@ -15,10 +15,13 @@ module.exports = (sequelize, DataTypes) => {
       calcul_total_creance: DataTypes.FLOAT,
       calcul_total_interets: DataTypes.FLOAT,
       frais_recouvrement: DataTypes.FLOAT,
+      taux_interets: DataTypes.FLOAT,
       honoraires: DataTypes.FLOAT,
-      somme_totale_ttc: DataTypes.FLOAT,
-      somme_totale_ht: DataTypes.FLOAT,
-      date_mise_en_demeure: DataTypes.STRING,
+      option_ttc_factures: DataTypes.BOOLEAN,
+      option_ttc_hono: DataTypes.BOOLEAN,
+      option_1: DataTypes.STRING,
+      option_2: DataTypes.STRING,
+      option_3: DataTypes.STRING,
       active: DataTypes.BOOLEAN
     },
     {}

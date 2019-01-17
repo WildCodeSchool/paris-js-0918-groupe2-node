@@ -19,6 +19,7 @@ const debiteursController = require("./controllers").debiteurs;
 const facturesController = require("./controllers").factures;
 const avoirsController = require("./controllers").avoirs;
 const acomptesController = require("./controllers").acomptes;
+const partielsController = require("./controllers").partiels;
 const actionsController = require("./controllers").actions;
 const documentsController = require("./controllers").documents;
 
@@ -96,6 +97,12 @@ app.post("/api/acomptes", acomptesController.create);
 app.put("/api/acomptes/:acompteId", acomptesController.update);
 app.delete("/api/acomptes/:acompteId", acomptesController.destroy);
 
+// CRUD routes for the Paiements_Partiels
+app.get("/api/partiels", partielsController.list);
+app.post("/api/partiels", partielsController.create);
+app.put("/api/partiels/:partielId", partielsController.update);
+app.delete("/api/partiels/:partielId", partielsController.destroy);
+
 // CRUD routes for the Actions
 app.get("/api/actions/:actionId/", actionsController.get);
 app.get("/api/actions", actionsController.list);
@@ -103,9 +110,11 @@ app.post("/api/actions", actionsController.create);
 app.put("/api/actions/:actionId", actionsController.update);
 app.delete("/api/actions/:actionId", actionsController.destroy);
 
-
-// Documents creation 
-app.get("/api/documents/createFormalNotice/:id/", documentsController.createFormalNotice);
+// Documents creation
+app.get(
+  "/api/documents/createFormalNotice/:id/",
+  documentsController.createFormalNotice
+);
 
 // Setup of a default catch-all route that sends back a message in JSON format.
 app.get("/", (req, res) =>

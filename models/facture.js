@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
       montant_ht: DataTypes.FLOAT,
       montant_ttc: DataTypes.FLOAT,
       echeance_facture: DataTypes.STRING,
+      paiement_echeance: DataTypes.BOOLEAN,
+      paiement_livraison: DataTypes.BOOLEAN,
       taux_applicable: DataTypes.FLOAT,
       intérets_capitalises: DataTypes.FLOAT,
       active: DataTypes.BOOLEAN
@@ -21,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     facture.hasMany(models.acompte);
     facture.hasMany(models.avoir);
+    facture.hasMany(models.partiel);
     facture.belongsTo(models.action);
   };
   return facture;

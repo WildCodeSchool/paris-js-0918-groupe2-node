@@ -22,6 +22,8 @@ module.exports = {
         echeance_facture: req.body.echeance_facture,
         taux_applicable: req.body.taux_applicable,
         intérets_capitalises: req.body.intérets_capitalises,
+        paiement_echeance: req.body.paiement_echeance,
+        paiement_livraison: req.body.paiement_livraison,
         active: req.body.active
       })
       .then(facture => {
@@ -41,7 +43,8 @@ module.exports = {
           {
             model: models.acompte
           },
-          { model: models.avoir }
+          { model: models.avoir },
+          { model: models.partiel }
         ]
       })
       .then(factures => res.status(200).send(factures));
@@ -69,6 +72,10 @@ module.exports = {
               req.body.taux_applicable || facture.taux_applicable,
             intérets_capitalises:
               req.body.intérets_capitalises || facture.intérets_capitalises,
+            paiement_echeance:
+              req.body.paiement_echeance || facture.paiement_echeance,
+            paiement_livraison:
+              req.body.paiement_livraison || facture.paiement_livraison,
             active: req.body.active || facture.active
           })
           .then(facture => res.status(200).send(facture))
