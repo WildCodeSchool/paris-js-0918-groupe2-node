@@ -5,7 +5,9 @@ const factures = require("./factures");
 const avoirs = require("./avoirs");
 const acomptes = require("./acomptes");
 const actions = require("./actions");
-const documents = require("./documents");
+const med = require("./med");
+const injonction = require("./injonction");
+const recap = require("./recap");
 
 module.exports = {
   cabinets,
@@ -15,5 +17,7 @@ module.exports = {
   avoirs,
   acomptes,
   actions,
-  documents
+  med,
+  injonction,
+  recap
 };
