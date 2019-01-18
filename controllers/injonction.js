@@ -16,7 +16,7 @@ module.exports = {
           { model: models.debiteur },
           {
             model: models.facture,
-            include: [{ model: models.acompte }, { model: models.avoir }]
+            include: [{ model: models.acompte }, { model: models.avoir }, { model: models.partiel}]
           }
         ]
       })
@@ -67,11 +67,11 @@ module.exports = {
                 capital_social_creancier: result.creancier.capital_social,
                 numero_RCS_creancier: result.creancier.num_rcs,
                 ville_RCS_creancier: result.creancier.ville_rcs,
-                isFrançaise : result.creancier.nationalite_creancier == "France" ? numero_RCS_creancier + ville_RCS_creancier : false,
+                isFrançaise : result.creancier.nationalite_creancier == "Française" ? numero_RCS_creancier + ville_RCS_creancier : false,
                 numero_Reg_Soc: result.creancier.num_reg_soc,
                 numero_CCIAA: result.creancier.num_CCIAA,
                 numero_code_fiscal_TVA: result.creancier.num_cod_fisc_tva,
-                isItalienne : result.creancier.nationalite_creancier == "Italie" ? numero_Reg_Soc + ville_RCS_creancier + numero_CCIAA + numero_code_fiscal_TVA : false,
+                isItalienne : result.creancier.nationalite_creancier == "Italienne" ? numero_Reg_Soc + ville_RCS_creancier + numero_CCIAA + numero_code_fiscal_TVA : false,
                 isMale: result.debiteur.civilite == "M." ? true : false,
                 isFemale: result.debiteur.civilite == "Mme" ? true : false,
                 prenom_representant_legal_creancier: result.creancier.prenom,
