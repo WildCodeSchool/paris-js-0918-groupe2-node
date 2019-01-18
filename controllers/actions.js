@@ -25,7 +25,13 @@ module.exports = {
         calcul_total_creance: req.body.calcul_total_creance,
         calcul_total_interets: req.body.calcul_total_interets,
         frais_recouvrement: req.body.frais_recouvrement,
+        taux_interets: req.body.taux_interets,
         honoraires: req.body.honoraires,
+        option_ttc_factures: req.body.option_ttc_factures,
+        option_ttc_hono: req.body.option_ttc_hono,
+        option_1: req.body.option_1,
+        option_2: req.body.option_2,
+        option_3: req.body.option_3,
         somme_totale_ttc: req.body.somme_totale_ttc,
         somme_totale_ht: req.body.somme_totale_ht,
         date_mise_en_demeure: req.body.date_mise_en_demeure,
@@ -47,8 +53,21 @@ module.exports = {
       .findOne({
         where: { id: req.params.actionId },
         include: [
+          { model: models.creancier },
+          { model: models.debiteur },
           {
-            model: models.facture
+            model: models.facture,
+            include: [
+              {
+                model: models.acompte
+              },
+              {
+                model: models.avoir
+              },
+              {
+                model: models.partiel
+              }
+            ]
           }
         ]
       })
@@ -79,7 +98,14 @@ module.exports = {
               req.body.calcul_total_interets || action.calcul_total_interets,
             frais_recouvrement:
               req.body.frais_recouvrement || action.frais_recouvrement,
+            taux_interets: req.body.taux_interets || action.taux_interets,
             honoraires: req.body.honoraires || action.honoraires,
+            option_ttc_factures:
+              req.body.option_ttc_factures || action.option_ttc_factures,
+            option_ttc_hono: req.body.option_ttc_hono || action.option_ttc_hono,
+            option_1: req.body.option_1 || action.option_1,
+            option_2: req.body.option_2 || action.option_2,
+            option_3: req.body.option_3 || action.option_3,
             somme_totale_ttc:
               req.body.somme_totale_ttc || action.somme_totale_ttc,
             somme_totale_ht: req.body.somme_totale_ht || action.somme_totale_ht,

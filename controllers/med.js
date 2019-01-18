@@ -16,7 +16,7 @@ module.exports = {
           { model: models.debiteur },
           {
             model: models.facture,
-            include: [{ model: models.acompte }, { model: models.avoir }]
+            include: [{ model: models.acompte }, { model: models.avoir }, { model: models.partiel}]
           }
         ]
       })
@@ -85,7 +85,10 @@ module.exports = {
                   montant_facture_ttc: facture.montant_ttc,
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
-                  calcul_solde_du: ""
+                  calcul_solde_du: "",
+                  isPaiementEcheance: facture.paiement_echeance == true ? "Les factures devaient être payées à " : false,
+                  isPaiementLivraison : facture.paiement_livraison == true ?  result.debiteur.denomination_sociale + "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté, " + result.creancier.denomination_sociale + " lui a fait confiance et lui a" : false,
+
                 };
               }),
               avoirs: result.factures.map(element => {
@@ -96,44 +99,57 @@ module.exports = {
                     montant_avoir_ht: avoir.montant_ht,
                     montant_avoir_ttc: avoir.montant_ttc,
                     echeance_avoir: avoir.echeance_avoir,
-                    calcul_acomptes_payes: "",
-                    calcul_solde_du: ""
+                    // calcul_acomptes_payes: "",
+                    // calcul_solde_du: ""
                   };
                 });
               }),
               acomptes: result.factures.map(element => {
                 return element.acomptes.map(acompte => {
                   return {
-                  numero_acompte: acompte.num_acompte,
-                  date_acompte: acompte.date_acompte,
-                  acompte_ht: acompte.montant_ht,
-                  acompte_ttc: acompte.montant_ttc,
-                  calcul_acomptes_payes: "",
-                  calcul_solde_du: ""
+                    numero_acompte: acompte.num_acompte,
+                    date_acompte: acompte.date_acompte,
+                    montant_acompte_ht: acompte.montant_ht,
+                    montant_acompte_ttc: acompte.montant_ttc,
+                    // calcul_acomptes_payes: "",
+                    // calcul_solde_du: ""
                   };
                 });
               }),
-              // produits_vendus: result.produits,
-              // services_fournis: result.services,
-              //   isProduits : result.produits == produits_vendus ? true : false,
-              //   isServices : result.services == services_fournis ? true : false,
+              partiels: result.factures.map(element => {
+                return element.partiels.map(partiel => {
+                  return {
+                    numero_partiel: partiel.num_partiel,
+                    date_partiel: partiel.date_partiel,
+                    montant_partiel_ht: partiel.montant_ht,
+                    montant_partiel_ttc: partiel.montant_ttc,
+                    // calcul_acomptes_payes: "",
+                    // calcul_solde_du: ""
+                  };
+                });
+              }),
+              produits_vendus: "produits vendus",
+              services_fournis: "services fournis",
               calcul_creance_principale_HT: "",
               calcul_creance_principale_TTC: "",
-              //   delai_paiement_facture: "Les factures devaient être payées à " + result.factures.echeance_facture,
-              //   paiement_a_la_livraison: result.debiteur.denomination_sociale + "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté, " + result.creancier.denomination_sociale + " lui a fait confiance et lui a",
-              totalite_marchandise: "livré la totalite de la marchandise",
-              totalite_prestation: "fourni la totalite des prestations",
-              // isTotaliteMarchandise: result.produits == produits_vendus ? totalite_marchandise : false,
-              // isTotalitePrestation: result.services == services_fournis ? totalite_prestation : false,
+              // delai_paiement_facture: "",
+              // paiement_a_la_livraison: ,
+              // totalite_marchandise: ,
+              // totalite_prestation: ,
+              isProduits : result.produits == true ? produits_vendus + "livré la totalite de la marchandise" : false,
+              isServices : result.services == true ? services_fournis + "fourni la totalite des prestations" : false,
               entreprise_française:
                 "En application de l’article L. 441-6 du Code de commerce,les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 10 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitairepour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               entreprise_italienne:
                 "En application du décret législatif italien du 9 novembre 2012 n°192 y compris ses modifications ultérieures, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 8 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
-              calcul_total_interets: "",
-              //   isHonorairesHT: "",
-              //   isHonorairesTTC: "",
-              //   honoraires_HT: "",
-              //   honoraires_TTC: "",
+              // isFrançaise : ,
+              // isItalienne: ,
+                calcul_total_interets: "",
+                // isMale: result.debiteur.civilite == "M." ? true : false,
+                montant_honoraires : result.honoraires,
+                isMontantHono: result.honoraires !== 0 ? true : false,
+                isHonorairesHT: result.option_ttc_hono === false ? true : false,
+                isHonorairesTTC: result.option_ttc_hono === true ?  true : false,
               calcul_total_creance_principale_HT: "",
               calcul_total_creance_principale_TTC: ""
             });

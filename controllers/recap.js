@@ -44,8 +44,8 @@ module.exports = {
                 result.creancier.denomination_sociale,
               denomination_sociale_debiteur:
                 result.debiteur.denomination_sociale,
-              numero_facture: result.factures[0].num_facture,
-              date_facture: result.factures[0].date_facture,
+              numero_facture: result.factures.num_facture,
+              date_facture: result.factures.date_facture,
               //  montant_facture_ht: result.factures[0].montant_ht,
               //   montant_facture_ttc: result.factures[0].montant_ttc,
               taux_BCE: "",

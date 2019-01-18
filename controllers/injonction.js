@@ -106,7 +106,7 @@ module.exports = {
                       calcul_acomptes_payes: "",
                       calcul_solde_du: "",
                       numero_commande: facture.num_commande,
-                      confirmation_numero_commande : facture.num_confirmation_commande,
+                      numero_confirmation_commande : facture.num_confirmation_commande,
                       numero_document_transport: facture.num_document_transport,
                     };
                   }),
@@ -132,6 +132,18 @@ module.exports = {
                       acompte_ttc: acompte.montant_ttc,
                       calcul_acomptes_payes: "",
                       calcul_solde_du: ""
+                      };
+                    });
+                  }),
+                  partiels: result.factures.map(element => {
+                    return element.partiels.map(partiel => {
+                      return {
+                        numero_partiel: partiel.num_partiel,
+                        date_partiel: partiel.date_partiel,
+                        montant_partiel_ht: partiel.montant_ht,
+                        montant_partiel_ttc: partiel.montant_ttc,
+                        calcul_acomptes_payes: "",
+                        calcul_solde_du: ""
                       };
                     });
                   }),
