@@ -1,6 +1,7 @@
 const models = require("../models");
 const JSZip = require("jszip");
 const Docxtemplater = require("docxtemplater");
+const algo = require("../dojoalgo");
 
 const fs = require("fs");
 const fsPromises = fs.promises;
@@ -16,13 +17,61 @@ module.exports = {
           { model: models.debiteur },
           {
             model: models.facture,
-            include: [{ model: models.acompte }, { model: models.avoir }, { model: models.partiel}]
+            include: [
+              { model: models.acompte },
+              { model: models.avoir },
+              { model: models.partiel }
+            ]
           }
         ]
       })
       .then(result => {
         // Algo de calcul + concat de result
         // then => Generation de document
+
+        let facture = {
+          montant_ttc: result.factures[0].montant_ttc,
+          echeance_facture: JSON.stringify(result.factures[0].echeance_facture)
+        };
+
+        let mesAcomptes = {
+          montant_ttc: result.factures[0].acomptes[0].montant_ttc
+        };
+
+        let mesAvoirs = {
+          montant_ttc: result.factures[0].avoirs[0].montant_ttc
+        };
+
+        let mesPaiementsPartiels = {
+          montant_ttc: result.factures[0].partiels[0].montant_ttc,
+          date_partiel: result.factures[0].partiels[0].date_partiel
+        };
+
+        let dateFinCalculInterets = "20/12/2018";
+        let points = 10;
+        console.log(facture);
+        algo
+          .maSuperMetaFonction(
+            facture,
+            mesAcomptes,
+            mesAvoirs,
+            mesPaiementsPartiels,
+            dateFinCalculInterets,
+            points
+          )
+          .then(res => console.log(res));
+
+        // console.log(result.factures[0].montant_ttc);
+        // console.log(result.factures[0].echeance_facture);
+        // //map
+        // console.log(result.factures[0].acomptes[0].montant_ttc);
+        // //map
+        // console.log(result.factures[0].avoirs[0].montant_ttc);
+        // //map
+        // console.log(result.factures[0].partiels[0].montant_ttc);
+        // console.log(result.factures[0].partiels[0].date_partiel);
+        // dateFinCalculInterets
+        // points
 
         //Load the docx file as a binary
         fsPromises
@@ -86,9 +135,17 @@ module.exports = {
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
                   calcul_solde_du: "",
-                  isPaiementEcheance: facture.paiement_echeance == true ? "Les factures devaient être payées à " : false,
-                  isPaiementLivraison : facture.paiement_livraison == true ?  result.debiteur.denomination_sociale + "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté, " + result.creancier.denomination_sociale + " lui a fait confiance et lui a" : false,
-
+                  isPaiementEcheance:
+                    facture.paiement_echeance == true
+                      ? "Les factures devaient être payées à "
+                      : false,
+                  isPaiementLivraison:
+                    facture.paiement_livraison == true
+                      ? result.debiteur.denomination_sociale +
+                        "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté, " +
+                        result.creancier.denomination_sociale +
+                        " lui a fait confiance et lui a"
+                      : false
                 };
               }),
               avoirs: result.factures.map(element => {
@@ -98,7 +155,7 @@ module.exports = {
                     date_avoir: avoir.date_avoir,
                     montant_avoir_ht: avoir.montant_ht,
                     montant_avoir_ttc: avoir.montant_ttc,
-                    echeance_avoir: avoir.echeance_avoir,
+                    echeance_avoir: avoir.echeance_avoir
                     // calcul_acomptes_payes: "",
                     // calcul_solde_du: ""
                   };
@@ -110,7 +167,7 @@ module.exports = {
                     numero_acompte: acompte.num_acompte,
                     date_acompte: acompte.date_acompte,
                     montant_acompte_ht: acompte.montant_ht,
-                    montant_acompte_ttc: acompte.montant_ttc,
+                    montant_acompte_ttc: acompte.montant_ttc
                     // calcul_acomptes_payes: "",
                     // calcul_solde_du: ""
                   };
@@ -122,7 +179,7 @@ module.exports = {
                     numero_partiel: partiel.num_partiel,
                     date_partiel: partiel.date_partiel,
                     montant_partiel_ht: partiel.montant_ht,
-                    montant_partiel_ttc: partiel.montant_ttc,
+                    montant_partiel_ttc: partiel.montant_ttc
                     // calcul_acomptes_payes: "",
                     // calcul_solde_du: ""
                   };
@@ -136,20 +193,26 @@ module.exports = {
               // paiement_a_la_livraison: ,
               // totalite_marchandise: ,
               // totalite_prestation: ,
-              isProduits : result.produits == true ? produits_vendus + "livré la totalite de la marchandise" : false,
-              isServices : result.services == true ? services_fournis + "fourni la totalite des prestations" : false,
+              // isProduits:
+              //   result.produits == true
+              //     ? produits_vendus + "livré la totalite de la marchandise"
+              //     : false,
+              // isServices:
+              //   result.services == true
+              //     ? services_fournis + "fourni la totalite des prestations"
+              //     : false,
               entreprise_française:
                 "En application de l’article L. 441-6 du Code de commerce,les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 10 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitairepour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               entreprise_italienne:
                 "En application du décret législatif italien du 9 novembre 2012 n°192 y compris ses modifications ultérieures, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 8 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               // isFrançaise : ,
               // isItalienne: ,
-                calcul_total_interets: "",
-                // isMale: result.debiteur.civilite == "M." ? true : false,
-                montant_honoraires : result.honoraires,
-                isMontantHono: result.honoraires !== 0 ? true : false,
-                isHonorairesHT: result.option_ttc_hono === false ? true : false,
-                isHonorairesTTC: result.option_ttc_hono === true ?  true : false,
+              calcul_total_interets: "",
+              // isMale: result.debiteur.civilite == "M." ? true : false,
+              montant_honoraires: result.honoraires,
+              isMontantHono: result.honoraires !== 0 ? true : false,
+              isHonorairesHT: result.option_ttc_hono === false ? true : false,
+              isHonorairesTTC: result.option_ttc_hono === true ? true : false,
               calcul_total_creance_principale_HT: "",
               calcul_total_creance_principale_TTC: ""
             });

@@ -1,54 +1,55 @@
 const moment = require("moment");
 const axios = require("axios");
 const { flattenDeep } = require("lodash");
+// const miseEnDemeure = require("./controllers/med");
 moment().format();
 
 // DONNEES CONCERNANT UNE FACTURE SPECIFIQUE (A RECUP DE LA BDD)
 
-const facture = {
-  montant_ttc: 10268,
+// const facture = {
+//   montant_ttc: 10268,
 
-  echeance_facture: "01/01/2012"
-};
+//   echeance_facture: "01/01/2012"
+// };
 
-const mesAcomptes = [
-  {
-    montant_ttc: 100
-  },
-  {
-    montant_ttc: 100
-  }
-];
+// const mesAcomptes = [
+//   {
+//     montant_ttc: 100
+//   },
+//   {
+//     montant_ttc: 100
+//   }
+// ];
 
-const mesAvoirs = [
-  {
-    montant_ttc: 30
-  },
-  {
-    montant_ttc: 38
-  }
-];
+// const mesAvoirs = [
+//   {
+//     montant_ttc: 30
+//   },
+//   {
+//     montant_ttc: 38
+//   }
+// ];
 
-const mesPaiementsPartiels = [
-  {
-    montant_ttc: 1000,
-    date_paiement: "12/04/2012"
-  },
-  {
-    montant_ttc: 1000,
-    date_paiement: "25/10/2014"
-  }
-  // {
-  //   montant_ttc: 1000,
-  //   date_paiement: "08/12/2014"
-  // }
-];
+// const mesPaiementsPartiels = [
+//   {
+//     montant_ttc: 1000,
+//     date_partiel: "12/04/2012"
+//   },
+//   {
+//     montant_ttc: 1000,
+//     date_partiel: "25/10/2014"
+//   }
+//   // {
+//   //   montant_ttc: 1000,
+//   //   date_partiel: "08/12/2014"
+//   // }
+// ];
 
 // DATE DE FIN DE CALCUL DES INTERETS PAR FACTURE
-const dateFinCalculInterets = "20/12/2014";
+// const dateFinCalculInterets = "20/12/2014";
 
 // POINTS EN % A RAJOUTER AU TAUX DE LA BCE
-const points = 10;
+// const points = 10;
 
 const maSuperMetaFonction = async (
   facture,
@@ -575,7 +576,7 @@ const maSuperMetaFonction = async (
             factureModif,
             mesAcomptes,
             mesAvoirs,
-            mesPaiementsPartiels[i].date_paiement,
+            mesPaiementsPartiels[i].date_partiel,
             points
           )
         );
@@ -584,7 +585,7 @@ const maSuperMetaFonction = async (
         // Date dernier paiement partiel => date d'echeance globale
       } else if (i === nbrePaiementsPartiels - 1) {
         let facture2 = factureModif;
-        facture2.echeance_facture = mesPaiementsPartiels[i - 1].date_paiement;
+        facture2.echeance_facture = mesPaiementsPartiels[i - 1].date_partiel;
         // facture2.montant_ttc =
         //   facture2.montant_ttc - mesPaiementsPartiels[i - 1].montant_ttc;
         let dateDernierPaiementPartierMoins1Jour = moment(
@@ -608,11 +609,11 @@ const maSuperMetaFonction = async (
       } else if (i !== 0 && i !== nbrePaiementsPartiels - 1) {
         // console.log(i);
         let facture3 = factureModif;
-        facture3.echeance_facture = mesPaiementsPartiels[i - 1].date_paiement;
+        facture3.echeance_facture = mesPaiementsPartiels[i - 1].date_partiel;
         facture3.montant_ttc = factureModif.montant_ttc;
 
         // console.log(i, facture3.echeance_facture);
-        let dateFinIntermediaire = mesPaiementsPartiels[i].date_paiement;
+        let dateFinIntermediaire = mesPaiementsPartiels[i].date_partiel;
         // console.log(i + 1);
         result.push(
           await maMetaFonction(
@@ -631,11 +632,13 @@ const maSuperMetaFonction = async (
   return flattenDeep(result);
 };
 
-maSuperMetaFonction(
-  facture,
-  mesAcomptes,
-  mesAvoirs,
-  mesPaiementsPartiels,
-  dateFinCalculInterets,
-  points
-).then(res => console.log(res));
+// maSuperMetaFonction(
+//   facture,
+//   mesAcomptes,
+//   mesAvoirs,
+//   mesPaiementsPartiels,
+//   dateFinCalculInterets,
+//   points
+// ).then(res => console.log(res));
+
+module.exports = { maSuperMetaFonction };
