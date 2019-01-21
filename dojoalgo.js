@@ -639,6 +639,6 @@ const maSuperMetaFonction = async (
 //   mesPaiementsPartiels,
 //   dateFinCalculInterets,
 //   points
-// ).then(res => console.log(res));
+// );
 
-module.exports = { maSuperMetaFonction };
+module.exports.maSuperMetaFonction = maSuperMetaFonction;

@@ -1,7 +1,7 @@
 const models = require("../models");
 const JSZip = require("jszip");
 const Docxtemplater = require("docxtemplater");
-const algo = require("../dojoalgo");
+const algo = require("../dojoalgo").maSuperMetaFonction;
 
 const fs = require("fs");
 const fsPromises = fs.promises;
@@ -25,41 +25,10 @@ module.exports = {
           }
         ]
       })
-      .then(result => {
+      .then(async result => {
+        // return console.log(result);
         // Algo de calcul + concat de result
         // then => Generation de document
-
-        // let facture = {
-        //   montant_ttc: result.factures[0].montant_ttc,
-        //   echeance_facture: JSON.stringify(result.factures[0].echeance_facture)
-        // };
-
-        // let mesAcomptes = {
-        //   montant_ttc: result.factures[0].acomptes[0].montant_ttc
-        // };
-
-        // let mesAvoirs = {
-        //   montant_ttc: result.factures[0].avoirs[0].montant_ttc
-        // };
-
-        // let mesPaiementsPartiels = {
-        //   montant_ttc: result.factures[0].partiels[0].montant_ttc,
-        //   date_partiel: result.factures[0].partiels[0].date_partiel
-        // };
-
-        // let dateFinCalculInterets = "20/12/2018";
-        // let points = 10;
-        // console.log(facture);
-        // algo
-        //   .maSuperMetaFonction(
-        //     facture,
-        //     mesAcomptes,
-        //     mesAvoirs,
-        //     mesPaiementsPartiels,
-        //     dateFinCalculInterets,
-        //     points
-        //   )
-        //   .then(res => console.log(res));
 
         // console.log(result.factures[0].montant_ttc);
         // console.log(result.factures[0].echeance_facture);
@@ -70,8 +39,46 @@ module.exports = {
         // //map
         // console.log(result.factures[0].partiels[0].montant_ttc);
         // console.log(result.factures[0].partiels[0].date_partiel);
-        // dateFinCalculInterets
-        // points
+        // // dateFinCalculInterets;
+        // // points;
+
+        //////////
+
+        let facture = {
+          montant_ttc: result.factures[0].montant_ttc,
+          echeance_facture: result.factures[0].echeance_facture
+        };
+
+        let mesAcomptes = [
+          {
+            montant_ttc: result.factures[0].acomptes[0].montant_ttc
+          }
+        ];
+
+        let mesAvoirs = [
+          {
+            montant_ttc: result.factures[0].avoirs[0].montant_ttc
+          }
+        ];
+
+        let mesPaiementsPartiels = [
+          {
+            montant_ttc: result.factures[0].partiels[0].montant_ttc,
+            date_partiel: result.factures[0].partiels[0].date_partiel
+          }
+        ];
+
+        let dateFinCalculInterets = "20/12/2018";
+        let points = 10;
+
+        const myAlgoResult = await algo(
+          facture,
+          mesAcomptes,
+          mesAvoirs,
+          mesPaiementsPartiels,
+          dateFinCalculInterets,
+          points
+        );
 
         //Load the docx file as a binary
         fsPromises
