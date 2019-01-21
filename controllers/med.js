@@ -2,6 +2,8 @@ const models = require("../models");
 const JSZip = require("jszip");
 const Docxtemplater = require("docxtemplater");
 const algo = require("../dojoalgo").maSuperMetaFonction;
+const moment = require("moment");
+moment().format();
 
 const fs = require("fs");
 const fsPromises = fs.promises;
@@ -26,59 +28,95 @@ module.exports = {
         ]
       })
       .then(async result => {
-        // return console.log(result);
-        // Algo de calcul + concat de result
-        // then => Generation de document
+        let myFinalAlgoResult = [];
 
-        // console.log(result.factures[0].montant_ttc);
-        // console.log(result.factures[0].echeance_facture);
-        // //map
-        // console.log(result.factures[0].acomptes[0].montant_ttc);
-        // //map
-        // console.log(result.factures[0].avoirs[0].montant_ttc);
-        // //map
-        // console.log(result.factures[0].partiels[0].montant_ttc);
-        // console.log(result.factures[0].partiels[0].date_partiel);
-        // // dateFinCalculInterets;
-        // // points;
+        for (let i = 0; i < result.factures.length; i++) {
+          let facture = {
+            montant_ttc: result.factures[i].montant_ttc,
+            echeance_facture: result.factures[i].echeance_facture
+          };
 
-        //////////
+          let mesAcomptes = [];
 
-        let facture = {
-          montant_ttc: result.factures[0].montant_ttc,
-          echeance_facture: result.factures[0].echeance_facture
-        };
-
-        let mesAcomptes = [
-          {
-            montant_ttc: result.factures[0].acomptes[0].montant_ttc
+          for (let j = 0; j < result.factures[i].acomptes.length; j++) {
+            mesAcomptes.push({
+              montant_ttc: result.factures[i].acomptes[j].montant_ttc
+            });
           }
-        ];
 
-        let mesAvoirs = [
-          {
-            montant_ttc: result.factures[0].avoirs[0].montant_ttc
+          let mesAvoirs = [];
+
+          for (let k = 0; k < result.factures[i].avoirs.length; k++) {
+            mesAvoirs.push({
+              montant_ttc: result.factures[i].avoirs[k].montant_ttc
+            });
           }
-        ];
 
-        let mesPaiementsPartiels = [
-          {
-            montant_ttc: result.factures[0].partiels[0].montant_ttc,
-            date_partiel: result.factures[0].partiels[0].date_partiel
+          let mesPaiementsPartiels = [];
+
+          for (let l = 0; l < result.factures[i].partiels.length; l++) {
+            mesPaiementsPartiels.push({
+              montant_ttc: result.factures[i].partiels[l].montant_ttc,
+              date_partiel: result.factures[i].partiels[l].date_partiel
+            });
           }
-        ];
 
-        let dateFinCalculInterets = "20/12/2018";
-        let points = 10;
+          let dateFinCalculInterets = "20/12/2018";
+          let points = 10;
+          let facture_number = "facture";
 
-        const myAlgoResult = await algo(
-          facture,
-          mesAcomptes,
-          mesAvoirs,
-          mesPaiementsPartiels,
-          dateFinCalculInterets,
-          points
-        );
+          myFinalAlgoResult.push({
+            [facture_number]: await algo(
+              facture,
+              mesAcomptes,
+              mesAvoirs,
+              mesPaiementsPartiels,
+              dateFinCalculInterets,
+              points
+            )
+          });
+        }
+
+        let myFinalAlgoResultSorted = [];
+
+        // myFinalAlgoResultSorted retourne un objet de ce style
+        //   [ { facture_0:
+        //     [ [Object],
+        //       [Object],
+        //       [Object] ] },
+        //  { facture_1:
+        //     [ [Object], [Object], [Object] ] } ]
+        // chaque objet est composé de la sorte:
+        // { date_debut: '01/07/2018',
+        // date_fin: '20/12/2018',
+        // creance_sur_cette_periode: 7300,
+        // nbre_jours_comptabilises: 173,
+        // interets_periode: 346,
+        // taux_interet_applique: 0 }
+
+        for (let i = 0; i < myFinalAlgoResult.length; i++) {
+          let numberFacture = "facture_";
+
+          let mySortedResult = myFinalAlgoResult[i].facture.sort(
+            (item, otherItem) => {
+              dateDebutPremierItem = moment(
+                item.date_debut,
+                "DD/MM/YYYY",
+                true
+              );
+              dateDebutSecondItem = moment(
+                otherItem.date_debut,
+                "DD/MM/YYYY",
+                true
+              );
+              let mySorted = dateDebutPremierItem.diff(dateDebutSecondItem);
+              return -mySorted;
+            }
+          );
+
+          myFinalAlgoResultSorted.push({ [numberFacture + i]: mySortedResult });
+        }
+        // console.log(myFinalAlgoResultSorted);
 
         //Load the docx file as a binary
         fsPromises
