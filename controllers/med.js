@@ -16,7 +16,11 @@ module.exports = {
           { model: models.debiteur },
           {
             model: models.facture,
-            include: [{ model: models.acompte }, { model: models.avoir }, { model: models.partiel}]
+            include: [
+              { model: models.acompte },
+              { model: models.avoir },
+              { model: models.partiel }
+            ]
           }
         ]
       })
@@ -54,13 +58,16 @@ module.exports = {
 
             today = dd + "/" + mm + "/" + yyyy; // date for the word document
             today_file = dd + "-" + mm + "-" + yyyy; // date for the file name
+            let lesAvoirs = result.factures.map(e => e.avoirs.map(e => e));
+            console.log(JSON.stringify(lesAvoirs, null, 2));
 
             doc.setData({
-              denomination_sociale_debiteur: result.debiteur.denomination_sociale,
+              denomination_sociale_debiteur:
+                result.debiteur.denomination_sociale,
               forme_juridique_debiteur: result.debiteur.forme_juridique,
               isMale: result.debiteur.civilite == "M." ? true : false,
               isFemale: result.debiteur.civilite == "Mme" ? true : false,
-              isM : result.debiteur.civilite == "M." ? true : false,
+              isM: result.debiteur.civilite == "M." ? true : false,
               isF: result.debiteur.civilite == "Mme" ? true : false,
               prenom_representant_legal: result.debiteur.prenom,
               nom_representant_legal: result.debiteur.nom,
@@ -69,8 +76,8 @@ module.exports = {
               code_postal_debiteur: result.debiteur.code_postal_siege,
               ville_debiteur: result.debiteur.ville_siege,
               date_mise_en_demeure: today,
-              //   num_AR: "",
-              denomination_sociale_creancier: result.creancier.denomination_sociale,
+              denomination_sociale_creancier:
+                result.creancier.denomination_sociale,
               nationalite_creancier: result.creancier.nationalite_societe,
               forme_juridique_creancier: result.creancier.forme_juridique,
               adresse_creancier: result.creancier.adresse_siege,
@@ -78,34 +85,47 @@ module.exports = {
               ville_creancier: result.creancier.ville_siege,
               pays_creancier: result.creancier.pays_siege,
               isHT: result.option_ttc_factures === false ? true : false,
-              isTTC: result.option_ttc_factures === true ?  true : false,
-              // delai_paiement_facture: "Les factures devaient être payées à ",
+              isTTC: result.option_ttc_factures === true ? true : false,
               factures: result.factures.map(facture => {
                 return {
                   numero_facture: facture.num_facture,
                   date_facture: facture.date_facture,
                   montant_facture_ht: facture.montant_ht,
+                  isFacturestHT:
+                    result.option_ttc_factures == false
+                      ? facture.montant_ht
+                      : false,
                   montant_facture_ttc: facture.montant_ttc,
+                  isFacturesTTC:
+                    result.option_ttc_factures == true
+                      ? facture.montant_ttc
+                      : false,
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
-                  calcul_solde_du: "",
-                  // isPaiementEcheance: facture.paiement_echeance == true ? true : false,
-                  // isPaiementLivraison : facture.paiement_livraison == true ?  result.debiteur.denomination_sociale + "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté, " + result.creancier.denomination_sociale + " lui a fait confiance et lui a" : false,
-
+                  isPaiementEcheance:
+                    facture.paiement_echeance == true
+                      ? "les factures devaient être payées à"
+                      : false,
+                  isPaiementLivraison:
+                    facture.paiement_livraison == true
+                      ? result.debiteur.denomination_sociale +
+                        "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté," +
+                        result.creancier.denomination_sociale +
+                        "lui a fait confiance et lui a "
+                      : false
                 };
               }),
-              avoirs: result.factures.map(element => {
-                return element.avoirs.map(avoir => {
-                  return {
-                    numero_avoir: avoir.num_avoir,
-                    date_avoir: avoir.date_avoir,
-                    montant_avoir_ht: avoir.montant_ht,
-                    montant_avoir_ttc: avoir.montant_ttc,
-                    echeance_avoir: avoir.echeance_avoir,
-                    // calcul_acomptes_payes: "",
-                    // calcul_solde_du: ""
-                  };
-                });
+              avoirs: lesAvoirs.map(avoir => {
+                return {
+                  numero_avoir: avoir.num_avoir,
+                  date_avoir: avoir.date_avoir,
+                  montant_avoir_ht: avoir.montant_ht,
+                  isAvoirsHT:
+                    result.option_ttc_factures === false ? true : false,
+                  montant_avoir_ttc: avoir.montant_ttc,
+                  isAvoirsTTC:
+                    result.option_ttc_factures === true ? true : false
+                };
               }),
               acomptes: result.factures.map(element => {
                 return element.acomptes.map(acompte => {
@@ -113,9 +133,15 @@ module.exports = {
                     numero_acompte: acompte.num_acompte,
                     date_acompte: acompte.date_acompte,
                     montant_acompte_ht: acompte.montant_ht,
+                    isAcomptesHT:
+                      result.option_ttc_factures == false
+                        ? acompte.montant_ht
+                        : false,
                     montant_acompte_ttc: acompte.montant_ttc,
-                    // calcul_acomptes_payes: "",
-                    // calcul_solde_du: ""
+                    isAcomptesTTC:
+                      result.option_ttc_factures == true
+                        ? acompte.montant_ttc
+                        : false
                   };
                 });
               }),
@@ -125,33 +151,33 @@ module.exports = {
                     numero_partiel: partiel.num_partiel,
                     date_partiel: partiel.date_partiel,
                     montant_partiel_ht: partiel.montant_ht,
+                    isPartielsHT:
+                      result.option_ttc_factures == false
+                        ? partiel.montant_ht
+                        : false,
                     montant_partiel_ttc: partiel.montant_ttc,
-                    // calcul_acomptes_payes: "",
-                    // calcul_solde_du: ""
+                    isPartielsTTC:
+                      result.option_ttc_factures == true
+                        ? partiel.montant_ttc
+                        : false
                   };
                 });
               }),
-            
               calcul_creance_principale_HT: "",
               calcul_creance_principale_TTC: "",
-              // paiement_a_la_livraison: ,
-              // totalite_marchandise: ,
-              // totalite_prestation: ,
-              isProduits : result.produits == true ? true : false,
-              isServices : result.services == true ? true : false,
-              // isProduits : result.produits == true ? produits_vendus + "livré la totalite de la marchandise" : false,
-              // isServices : result.services == true ? services_fournis + "fourni la totalite des prestations" : false,
+              isProduits: result.produits == true ? true : false,
+              isServices: result.services == true ? true : false,
               entreprise_française:
                 "En application de l’article L. 441-6 du Code de commerce,les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 10 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitairepour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               entreprise_italienne:
                 "En application du décret législatif italien du 9 novembre 2012 n°192 y compris ses modifications ultérieures, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 8 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
-              // isFrançaise : ,
+              // isFrançaise : result.,
               // isItalienne: ,
-                calcul_total_interets: "",
-                montant_honoraires : result.honoraires,
-                isMontantHono: result.honoraires !== 0 ? true : false,
-                isHonorairesHT: result.option_ttc_hono === false ? true : false,
-                isHonorairesTTC: result.option_ttc_hono === true ?  true : false,
+              calcul_total_interets: "",
+              montant_honoraires: result.honoraires,
+              isMontantHono: result.honoraires !== 0 ? true : false,
+              isHonorairesHT: result.option_ttc_hono === false ? true : false,
+              isHonorairesTTC: result.option_ttc_hono === true ? true : false,
               calcul_total_creance_principale_HT: "",
               calcul_total_creance_principale_TTC: ""
             });
