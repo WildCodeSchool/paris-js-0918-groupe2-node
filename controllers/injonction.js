@@ -59,6 +59,28 @@ module.exports = {
             today = dd + "/" + mm + "/" + yyyy; // date for the word document
             today_file = dd + "-" + mm + "-" + yyyy; // date for the file name
 
+            let lesAvoirs = [];
+
+            for (let i = 0; i < result.factures.length; i++) {
+              for (let j = 0; j < result.factures[i].avoirs.length; j++) {
+                lesAvoirs.push(result.factures[i].avoirs[j]);
+              }
+            }
+
+            let lesAcomptes = [];
+            for (let i = 0; i < result.factures.length; i++) {
+              for (let j = 0; j < result.factures[i].acomptes.length; j++) {
+                lesAcomptes.push(result.factures[i].acomptes[j]);
+              }
+            }
+
+            let lesPartiels = [];
+            for (let i = 0; i < result.factures.length; i++) {
+              for (let j = 0; j < result.factures[i].partiels.length; j++) {
+                lesPartiels.push(result.factures[i].partiels[j]);
+              }
+            }
+
             doc.setData({
               ville_pres_TC_Requete: result.creancier.ville_siege,
               nationalite_creancier: result.creancier.nationalite_societe,
@@ -105,7 +127,15 @@ module.exports = {
                   numero_facture: facture.num_facture,
                   date_facture: facture.date_facture,
                   montant_facture_ht: facture.montant_ht,
+                  isFacturestHT:
+                  result.option_ttc_factures == false
+                    ? facture.montant_ht
+                    : false,
                   montant_facture_ttc: facture.montant_ttc,
+                  isFacturesTTC:
+                    result.option_ttc_factures == true
+                      ? facture.montant_ttc
+                      : false,
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
                   isPaiementEcheance:
@@ -126,36 +156,54 @@ module.exports = {
                   numero_document_transport: facture.num_document_transport
                 };
               }),
-              avoirs: result.factures.map(element => {
+              avoirs: lesAvoirs.map(avoir => {
                 return {
-                  numero_avoir: element.avoirs.map(e => e.num_avoir),
-                  date_avoir: element.avoirs.map(e => e.date_avoir),
-                  montant_avoir_ht: element.avoirs.map(e => e.montant_ht),
-                  montant_avoir_ttc: element.avoirs.map(e => e.montant_ttc)
+                  numero_avoir: avoir.num_avoir,
+                  date_avoir: avoir.date_avoir,
+                  montant_avoir_ht: avoir.montant_ht,
+                  isAvoirsHT:
+                    result.option_ttc_factures === false ? true : false,
+                  montant_avoir_ttc: avoir.montant_ttc,
+                  isAvoirsTTC:
+                    result.option_ttc_factures === true ? true : false
                 };
               }),
-              acomptes: result.factures.map(element => {
-                return element.acomptes.map(acompte => {
+              acomptes: lesAcomptes.map(acompte => {
                   return {
                     numero_acompte: acompte.num_acompte,
                     date_acompte: acompte.date_acompte,
                     montant_acompte_ht: acompte.montant_ht,
-                    montant_acompte_ttc: acompte.montant_ttc
+                    isAcomptesHT:
+                      result.option_ttc_factures == false
+                        ? acompte.montant_ht
+                        : false,
+                    montant_acompte_ttc: acompte.montant_ttc,
+                    isAcomptesTTC:
+                      result.option_ttc_factures == true
+                        ? acompte.montant_ttc
+                        : false
                   };
-                });
               }),
-              partiels: result.factures.map(element => {
-                return element.partiels.map(partiel => {
+              partiels: lesPartiels.map(partiel => {
                   return {
                     numero_partiel: partiel.num_partiel,
                     date_partiel: partiel.date_partiel,
                     montant_partiel_ht: partiel.montant_ht,
-                    montant_partiel_ttc: partiel.montant_ttc
+                    isPartielsHT:
+                      result.option_ttc_factures == false
+                        ? partiel.montant_ht
+                        : false,
+                    montant_partiel_ttc: partiel.montant_ttc,
+                    isPartielsTTC:
+                      result.option_ttc_factures == true
+                        ? partiel.montant_ttc
+                        : false
                   };
-                });
               }),
-              calcul_creance_principale_HT: "",
-              calcul_creance_principale_TTC: "",
+              calcul_creance_principale_HT: result.calcul_solde_du,
+              calcul_creance_principale_TTC: result.calcul_total_creance,
+              isCreanceHT: result.option_ttc_factures === false ? true : false,
+              isCreanceTTC: result.option_ttc_factures === true ? true : false,
               date_mise_en_demeure: result.date_mise_en_demeure,
               entreprise_française:
                 "Application du taux de refinancement de la BCE + 10 points",
