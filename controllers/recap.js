@@ -44,10 +44,16 @@ module.exports = {
                 result.creancier.denomination_sociale,
               denomination_sociale_debiteur:
                 result.debiteur.denomination_sociale,
-              numero_facture: result.factures.num_facture,
-              date_facture: result.factures.date_facture,
-              //  montant_facture_ht: result.factures[0].montant_ht,
-              //   montant_facture_ttc: result.factures[0].montant_ttc,
+              factures: result.factures.map(facture => {
+                return {
+                  numero_facture: facture.num_facture,
+                  date_facture: facture.date_facture
+                };
+              }),
+              // numero_facture: result.factures.num_facture,
+              // date_facture: result.factures.date_facture,
+              calcul_creance_principale_HT: "",
+              calcul_creance_principale_TTC: "",
               taux_BCE: "",
               points_entreprise_française: "taux BCE + 10 points",
               points_entreprise_italienne: "taux BCE + 8 points",
@@ -65,10 +71,10 @@ module.exports = {
             });
 
             // debtor's name for the filename
-            let debiteur_filename = "";
+            let debiteur_filename = result.debiteur.denomination_sociale;
 
             // creditor's name  for the filename
-            let creancier_filename = "";
+            let creancier_filename = result.creancier.denomination_sociale;
 
             try {
               // render the document
@@ -90,7 +96,7 @@ module.exports = {
               .writeFile(
                 path.resolve(
                   __dirname,
-                  `../public/documents/${today_file} - Mise en demeure - ${creancier_filename} contre ${debiteur_filename}.docx`
+                  `../public/documents/Tableau calcul intérêts - ${creancier_filename} contre ${debiteur_filename}.docx`
                 ),
                 buf
               )

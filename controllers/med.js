@@ -30,53 +30,102 @@ module.exports = {
       .then(async result => {
         let myFinalAlgoResult = [];
 
-        for (let i = 0; i < result.factures.length; i++) {
-          let facture = {
-            montant_ttc: result.factures[i].montant_ttc,
-            echeance_facture: result.factures[i].echeance_facture
-          };
+        if (result.option_ttc_factures === true) {
+          for (let i = 0; i < result.factures.length; i++) {
+            let facture = {
+              montant_ttc: result.factures[i].montant_ttc,
+              echeance_facture: result.factures[i].echeance_facture
+            };
 
-          let mesAcomptes = [];
+            let mesAcomptes = [];
 
-          for (let j = 0; j < result.factures[i].acomptes.length; j++) {
-            mesAcomptes.push({
-              montant_ttc: result.factures[i].acomptes[j].montant_ttc
+            for (let j = 0; j < result.factures[i].acomptes.length; j++) {
+              mesAcomptes.push({
+                montant_ttc: result.factures[i].acomptes[j].montant_ttc
+              });
+            }
+
+            let mesAvoirs = [];
+
+            for (let k = 0; k < result.factures[i].avoirs.length; k++) {
+              mesAvoirs.push({
+                montant_ttc: result.factures[i].avoirs[k].montant_ttc
+              });
+            }
+
+            let mesPaiementsPartiels = [];
+
+            for (let l = 0; l < result.factures[i].partiels.length; l++) {
+              mesPaiementsPartiels.push({
+                montant_ttc: result.factures[i].partiels[l].montant_ttc,
+                date_partiel: result.factures[i].partiels[l].date_partiel
+              });
+            }
+
+            let dateFinCalculInterets = result.date;
+            let points = result.taux_interets;
+            let facture_number = "facture";
+
+            myFinalAlgoResult.push({
+              [facture_number]: await algo(
+                facture,
+                mesAcomptes,
+                mesAvoirs,
+                mesPaiementsPartiels,
+                dateFinCalculInterets,
+                points
+              )
             });
           }
+        } else {
+          for (let i = 0; i < result.factures.length; i++) {
+            let facture = {
+              montant_ttc: result.factures[i].montant_ht,
+              echeance_facture: result.factures[i].echeance_facture
+            };
 
-          let mesAvoirs = [];
+            let mesAcomptes = [];
 
-          for (let k = 0; k < result.factures[i].avoirs.length; k++) {
-            mesAvoirs.push({
-              montant_ttc: result.factures[i].avoirs[k].montant_ttc
+            for (let j = 0; j < result.factures[i].acomptes.length; j++) {
+              mesAcomptes.push({
+                montant_ttc: result.factures[i].acomptes[j].montant_ht
+              });
+            }
+
+            let mesAvoirs = [];
+
+            for (let k = 0; k < result.factures[i].avoirs.length; k++) {
+              mesAvoirs.push({
+                montant_ttc: result.factures[i].avoirs[k].montant_ht
+              });
+            }
+
+            let mesPaiementsPartiels = [];
+
+            for (let l = 0; l < result.factures[i].partiels.length; l++) {
+              mesPaiementsPartiels.push({
+                montant_ttc: result.factures[i].partiels[l].montant_ht,
+                date_partiel: result.factures[i].partiels[l].date_partiel
+              });
+            }
+
+            let dateFinCalculInterets = result.date;
+            let points = result.taux_interets;
+            let facture_number = "facture";
+
+            myFinalAlgoResult.push({
+              [facture_number]: await algo(
+                facture,
+                mesAcomptes,
+                mesAvoirs,
+                mesPaiementsPartiels,
+                dateFinCalculInterets,
+                points
+              )
             });
           }
-
-          let mesPaiementsPartiels = [];
-
-          for (let l = 0; l < result.factures[i].partiels.length; l++) {
-            mesPaiementsPartiels.push({
-              montant_ttc: result.factures[i].partiels[l].montant_ttc,
-              date_partiel: result.factures[i].partiels[l].date_partiel
-            });
-          }
-
-          let dateFinCalculInterets = "20/12/2018";
-          let points = 10;
-          let facture_number = "facture";
-
-          myFinalAlgoResult.push({
-            [facture_number]: await algo(
-              facture,
-              mesAcomptes,
-              mesAvoirs,
-              mesPaiementsPartiels,
-              dateFinCalculInterets,
-              points
-            )
-          });
         }
-
+        // console.log(JSON.stringify(myFinalAlgoResult, null, 2));
         let myFinalAlgoResultSorted = [];
 
         // myFinalAlgoResultSorted retourne un objet de ce style
@@ -148,6 +197,8 @@ module.exports = {
 
             today = dd + "/" + mm + "/" + yyyy; // date for the word document
             today_file = dd + "-" + mm + "-" + yyyy; // date for the file name
+            let lesAvoirs = result.factures.map(e => e.avoirs.map(e => e));
+            console.log(JSON.stringify(lesAvoirs, null, 2));
 
             doc.setData({
               denomination_sociale_debiteur:
@@ -164,7 +215,6 @@ module.exports = {
               code_postal_debiteur: result.debiteur.code_postal_siege,
               ville_debiteur: result.debiteur.ville_siege,
               date_mise_en_demeure: today,
-              //   num_AR: "",
               denomination_sociale_creancier:
                 result.creancier.denomination_sociale,
               nationalite_creancier: result.creancier.nationalite_societe,
@@ -175,32 +225,46 @@ module.exports = {
               pays_creancier: result.creancier.pays_siege,
               isHT: result.option_ttc_factures === false ? true : false,
               isTTC: result.option_ttc_factures === true ? true : false,
-              // delai_paiement_facture: "Les factures devaient être payées à ",
               factures: result.factures.map(facture => {
                 return {
                   numero_facture: facture.num_facture,
                   date_facture: facture.date_facture,
                   montant_facture_ht: facture.montant_ht,
+                  isFacturestHT:
+                    result.option_ttc_factures == false
+                      ? facture.montant_ht
+                      : false,
                   montant_facture_ttc: facture.montant_ttc,
+                  isFacturesTTC:
+                    result.option_ttc_factures == true
+                      ? facture.montant_ttc
+                      : false,
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
-                  calcul_solde_du: ""
-                  // isPaiementEcheance: facture.paiement_echeance == true ? true : false,
-                  // isPaiementLivraison : facture.paiement_livraison == true ?  result.debiteur.denomination_sociale + "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté, " + result.creancier.denomination_sociale + " lui a fait confiance et lui a" : false,
+                  isPaiementEcheance:
+                    facture.paiement_echeance == true
+                      ? "les factures devaient être payées à"
+                      : false,
+                  isPaiementLivraison:
+                    facture.paiement_livraison == true
+                      ? result.debiteur.denomination_sociale +
+                        "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté," +
+                        result.creancier.denomination_sociale +
+                        "lui a fait confiance et lui a "
+                      : false
                 };
               }),
-              avoirs: result.factures.map(element => {
-                return element.avoirs.map(avoir => {
-                  return {
-                    numero_avoir: avoir.num_avoir,
-                    date_avoir: avoir.date_avoir,
-                    montant_avoir_ht: avoir.montant_ht,
-                    montant_avoir_ttc: avoir.montant_ttc,
-                    echeance_avoir: avoir.echeance_avoir
-                    // calcul_acomptes_payes: "",
-                    // calcul_solde_du: ""
-                  };
-                });
+              avoirs: lesAvoirs.map(avoir => {
+                return {
+                  numero_avoir: avoir.num_avoir,
+                  date_avoir: avoir.date_avoir,
+                  montant_avoir_ht: avoir.montant_ht,
+                  isAvoirsHT:
+                    result.option_ttc_factures === false ? true : false,
+                  montant_avoir_ttc: avoir.montant_ttc,
+                  isAvoirsTTC:
+                    result.option_ttc_factures === true ? true : false
+                };
               }),
               acomptes: result.factures.map(element => {
                 return element.acomptes.map(acompte => {
@@ -208,9 +272,15 @@ module.exports = {
                     numero_acompte: acompte.num_acompte,
                     date_acompte: acompte.date_acompte,
                     montant_acompte_ht: acompte.montant_ht,
-                    montant_acompte_ttc: acompte.montant_ttc
-                    // calcul_acomptes_payes: "",
-                    // calcul_solde_du: ""
+                    isAcomptesHT:
+                      result.option_ttc_factures == false
+                        ? acompte.montant_ht
+                        : false,
+                    montant_acompte_ttc: acompte.montant_ttc,
+                    isAcomptesTTC:
+                      result.option_ttc_factures == true
+                        ? acompte.montant_ttc
+                        : false
                   };
                 });
               }),
@@ -220,27 +290,27 @@ module.exports = {
                     numero_partiel: partiel.num_partiel,
                     date_partiel: partiel.date_partiel,
                     montant_partiel_ht: partiel.montant_ht,
-                    montant_partiel_ttc: partiel.montant_ttc
-                    // calcul_acomptes_payes: "",
-                    // calcul_solde_du: ""
+                    isPartielsHT:
+                      result.option_ttc_factures == false
+                        ? partiel.montant_ht
+                        : false,
+                    montant_partiel_ttc: partiel.montant_ttc,
+                    isPartielsTTC:
+                      result.option_ttc_factures == true
+                        ? partiel.montant_ttc
+                        : false
                   };
                 });
               }),
-
               calcul_creance_principale_HT: "",
               calcul_creance_principale_TTC: "",
-              // paiement_a_la_livraison: ,
-              // totalite_marchandise: ,
-              // totalite_prestation: ,
               isProduits: result.produits == true ? true : false,
               isServices: result.services == true ? true : false,
-              // isProduits : result.produits == true ? produits_vendus + "livré la totalite de la marchandise" : false,
-              // isServices : result.services == true ? services_fournis + "fourni la totalite des prestations" : false,
               entreprise_française:
                 "En application de l’article L. 441-6 du Code de commerce,les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 10 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitairepour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               entreprise_italienne:
                 "En application du décret législatif italien du 9 novembre 2012 n°192 y compris ses modifications ultérieures, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 8 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
-              // isFrançaise : ,
+              // isFrançaise : result.,
               // isItalienne: ,
               calcul_total_interets: "",
               montant_honoraires: result.honoraires,
