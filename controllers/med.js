@@ -30,6 +30,7 @@ module.exports = {
       .then(async result => {
         let myFinalAlgoResult = [];
         let myFinalAlgoResultSorted = [];
+        let nbreFactures = result.factures.length;
         if (result.option_ttc_factures === true) {
           for (let i = 0; i < result.factures.length; i++) {
             let facture = {
@@ -247,6 +248,11 @@ module.exports = {
               }
             }
 
+            let fraisRecouvrement = nbreFactures * 40
+            let totalCreanceTTC = result.calcul_total_creance + result.honoraires + myFinalInterestSum + fraisRecouvrement;
+            let totalCreanceHT = result.calcul_solde_du + result.honoraires + myFinalInterestSum + fraisRecouvrement
+            
+
             doc.setData({
               denomination_sociale_debiteur:
                 result.debiteur.denomination_sociale,
@@ -365,11 +371,14 @@ module.exports = {
                 "En application du décret législatif italien du 9 novembre 2012 n°192 y compris ses modifications ultérieures, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 8 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               isEntrepriseFrançaise: result.taux_interets === 10 ? true : false,
               isEntrepriseItalienne: result.taux_interets === 8 ? true : false,
-              calcul_total_interets: "",
+              calcul_total_interets: myFinalInterestSum,
               montant_honoraires: result.honoraires,
               isMontantHono: result.honoraires !== 0 ? true : false,
               isHonorairesHT: result.option_ttc_hono === false ? true : false,
-              isHonorairesTTC: result.option_ttc_hono === true ? true : false
+              isHonorairesTTC: result.option_ttc_hono === true ? true : false,
+              total_creance_principale_TTC: totalCreanceTTC,
+              total_creance_principale_HT: totalCreanceHT,
+              frais: fraisRecouvrement
             });
 
             // debtor's name for the filename
