@@ -197,8 +197,28 @@ module.exports = {
 
             today = dd + "/" + mm + "/" + yyyy; // date for the word document
             today_file = dd + "-" + mm + "-" + yyyy; // date for the file name
-            let lesAvoirs = result.factures.map(e => e.avoirs.map(e => e));
-            console.log(JSON.stringify(lesAvoirs, null, 2));
+
+            let lesAvoirs = [];
+
+            for (let i = 0; i < result.factures.length; i++) {
+              for (let j = 0; j < result.factures[i].avoirs.length; j++) {
+                lesAvoirs.push(result.factures[i].avoirs[j]);
+              }
+            }
+
+            let lesAcomptes = [];
+            for (let i = 0; i < result.factures.length; i++) {
+              for (let j = 0; j < result.factures[i].acomptes.length; j++) {
+                lesAcomptes.push(result.factures[i].acomptes[j]);
+              }
+            }
+
+            let lesPartiels = [];
+            for (let i = 0; i < result.factures.length; i++) {
+              for (let j = 0; j < result.factures[i].partiels.length; j++) {
+                lesPartiels.push(result.factures[i].partiels[j]);
+              }
+            }
 
             doc.setData({
               denomination_sociale_debiteur:
@@ -206,8 +226,8 @@ module.exports = {
               forme_juridique_debiteur: result.debiteur.forme_juridique,
               isMale: result.debiteur.civilite == "M." ? true : false,
               isFemale: result.debiteur.civilite == "Mme" ? true : false,
-              isM: result.debiteur.civilite == "M." ? true : false,
-              isF: result.debiteur.civilite == "Mme" ? true : false,
+              // isM: result.debiteur.civilite == "M." ? true : false,
+              // isF: result.debiteur.civilite == "Mme" ? true : false,
               prenom_representant_legal: result.debiteur.prenom,
               nom_representant_legal: result.debiteur.nom,
               fonction_representant_legal: result.debiteur.fonction,
@@ -266,8 +286,7 @@ module.exports = {
                     result.option_ttc_factures === true ? true : false
                 };
               }),
-              acomptes: result.factures.map(element => {
-                return element.acomptes.map(acompte => {
+              acomptes: lesAcomptes.map(acompte => {
                   return {
                     numero_acompte: acompte.num_acompte,
                     date_acompte: acompte.date_acompte,
@@ -282,10 +301,8 @@ module.exports = {
                         ? acompte.montant_ttc
                         : false
                   };
-                });
               }),
-              partiels: result.factures.map(element => {
-                return element.partiels.map(partiel => {
+              partiels: lesPartiels.map(partiel => {
                   return {
                     numero_partiel: partiel.num_partiel,
                     date_partiel: partiel.date_partiel,
@@ -300,28 +317,32 @@ module.exports = {
                         ? partiel.montant_ttc
                         : false
                   };
-                });
               }),
               calcul_creance_principale_HT: result.calcul_solde_du,
               calcul_creance_principale_TTC: result.calcul_total_creance,
-              isCreanceHT : result.option_ttc_factures === false ? true : false,
-              isCreanceTTC : result.option_ttc_factures === true ? true : false,
-              isProduitsServices : result.produits && result.services === true ? true : false,
-              isProduits: result.produits === true && result.services == false ? "produits vendus" : false,
-              isServices: result.services == true && result.produits == false ? "services fournis" : false,
+              isCreanceHT: result.option_ttc_factures === false ? true : false,
+              isCreanceTTC: result.option_ttc_factures === true ? true : false,
+              isProduitsServices:
+                result.produits && result.services === true ? true : false,
+              isProduits:
+                result.produits === true && result.services == false
+                  ? "produits vendus"
+                  : false,
+              isServices:
+                result.services == true && result.produits == false
+                  ? "services fournis"
+                  : false,
               entreprise_française:
                 "En application de l’article L. 441-6 du Code de commerce, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 10 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               entreprise_italienne:
                 "En application du décret législatif italien du 9 novembre 2012 n°192 y compris ses modifications ultérieures, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 8 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
-              isEntrepriseFrançaise : result.taux_interets === 10 ? true : false,
+              isEntrepriseFrançaise: result.taux_interets === 10 ? true : false,
               isEntrepriseItalienne: result.taux_interets === 8 ? true : false,
               calcul_total_interets: "",
               montant_honoraires: result.honoraires,
               isMontantHono: result.honoraires !== 0 ? true : false,
               isHonorairesHT: result.option_ttc_hono === false ? true : false,
-              isHonorairesTTC: result.option_ttc_hono === true ? true : false,
-              calcul_total_creance_principale_HT: "",
-              calcul_total_creance_principale_TTC: ""
+              isHonorairesTTC: result.option_ttc_hono === true ? true : false
             });
 
             // debtor's name for the filename
