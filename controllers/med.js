@@ -30,6 +30,7 @@ module.exports = {
       .then(async result => {
         let myFinalAlgoResult = [];
         let myFinalAlgoResultSorted = [];
+
         if (result.option_ttc_factures === true) {
           for (let i = 0; i < result.factures.length; i++) {
             let facture = {
