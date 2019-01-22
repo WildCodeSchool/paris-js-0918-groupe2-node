@@ -72,28 +72,18 @@ module.exports = {
               capital_social_creancier: result.creancier.capital_social,
               numero_RCS_creancier: result.creancier.num_rcs,
               ville_RCS_creancier: result.creancier.ville_rcs,
-              isFrançaise:
-                result.creancier.pays_siege == "France"
-                  ? result.creancier.num_rcs + result.creancier.ville_rcs
-                  : false,
+              isFrançaise: result.creancier.pays_siege == "France" ? true : false,
               numero_Reg_Soc: result.creancier.num_reg_soc,
               numero_CCIAA: result.creancier.num_CCIAA,
               numero_code_fiscal_TVA: result.creancier.num_cod_fisc_tva,
-              isItalienne:
-                result.creancier.pays_siege == "Italie"
-                  ? numero_Reg_Soc +
-                    ville_RCS_creancier +
-                    numero_CCIAA +
-                    numero_code_fiscal_TVA
-                  : false,
-              isMale: result.debiteur.civilite == "M." ? true : false,
-              isFemale: result.debiteur.civilite == "Mme" ? true : false,
+              isItalienne: result.creancier.pays_siege == "Italie" ? true : false,
+              isMale: result.creancier.civilite == "M." ? true : false,
+              isFemale: result.creancier.civilite == "Mme" ? true : false,
               prenom_representant_legal_creancier: result.creancier.prenom,
               nom_representant_legal_creancier: result.creancier.nom,
               fonction_representant_legal_creancier: result.creancier.fonction,
               nationalite_debiteur: result.debiteur.nationalite_societe,
-              denomination_sociale_debiteur:
-                result.debiteur.denomination_sociale,
+              denomination_sociale_debiteur: result.debiteur.denomination_sociale,
               adresse_debiteur: result.debiteur.adresse_siege,
               code_postal_debiteur: result.debiteur.code_postal_siege,
               ville_debiteur: result.debiteur.ville_siege,
@@ -103,12 +93,10 @@ module.exports = {
               prenom_representant_legal_debiteur: result.debiteur.prenom,
               nom_representant_legal_debiteur: result.debiteur.nom,
               fonction_representant_legal_debiteur: result.debiteur.fonction,
-              isProduits: result.produits == true ? true : false,
-              isServices: result.services == true ? true : false,
-              //   isProduits : result.produits == produits_vendus ? true : false,
-              //   isServices : result.services == services_fournis ? true : false,
-              denomination_sociale_debiteur:
-                result.debiteur.denomination_sociale,
+              isProduitsServices : result.produits && result.services === true ? true : false,
+              isProduits: result.produits === true && result.services == false ? "produits vendus" : false,
+              isServices: result.services == true && result.produits == false ? "services fournis" : false,
+              denomination_sociale_debiteur: result.debiteur.denomination_sociale,
               forme_juridique_debiteur: result.debiteur.forme_juridique,
               isHT: result.option_ttc_factures === false ? true : false,
               isTTC: result.option_ttc_factures === true ? true : false,
@@ -184,9 +172,11 @@ module.exports = {
               art_700: "Art 700",
               ville_TC_Opposition: result.debiteur.ville_siege,
               points_entreprise_française: "de la BCE + 10 points",
-              points_entreprise_italienne: "de la BCE + 8 points"
-              //   isEntrepriseFr : result.factures[0].taux_applicable == "10" ? entreprise_française + loi_entreprise_française +  points_entreprise_française: false,
-              //   isEntrepriseIt : result.factures[0].taux_applicable == "8" ? entreprise_italienne + loi_entreprise_italienne + points_entreprise_italie: false,
+              points_entreprise_italienne: "de la BCE + 8 points",
+              isFrançaise : result.taux_interets === 10 ? true : false,
+              isItalienne: result.taux_interets === 8 ? true : false,
+              isEntrepriseFrançaise : result.taux_interets === 10 ? true : false,
+              isEntrepriseItalienne : result.taux_interets === 8 ? true : false,
             });
 
             // debtor's name for the filename
