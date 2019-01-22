@@ -39,11 +39,25 @@ module.exports = {
             const doc = new Docxtemplater();
             doc.loadZip(zip);
 
+            //set today's date
+            let today = new Date();
+            let dd = today.getDate();
+            let mm = today.getMonth() + 1; // january is 0...
+            let yyyy = today.getFullYear();
+
+            if (dd < 10) {
+              dd = "0" + dd;
+            }
+            if (mm < 10) {
+              mm = "0" + mm;
+            }
+
+            today = dd + "/" + mm + "/" + yyyy; // date for the word document
+            today_file = dd + "-" + mm + "-" + yyyy; // date for the file name
+
             doc.setData({
-              denomination_sociale_creancier:
-                result.creancier.denomination_sociale,
-              denomination_sociale_debiteur:
-                result.debiteur.denomination_sociale,
+              denomination_sociale_creancier: result.creancier.denomination_sociale,
+              denomination_sociale_debiteur: result.debiteur.denomination_sociale,
               factures: result.factures.map(facture => {
                 return {
                   numero_facture: facture.num_facture,
@@ -65,9 +79,9 @@ module.exports = {
               date_reglement_acompte: "",
               montant_acompte: "",
               montant_total_interets: "",
-              loi_entreprise_française:
-                "Art. L 441-6 du Code de commerce : Sauf disposition contraire qui ne peut toutefois fixer un taux inférieur à trois fois le tauxd'intérêt légal, ce taux est égal au taux d'intérêt appliqué par la BCE majoré de 10 points de pourcentage (...) Les pénalités de retard  sont  exigibles  sans  qu'un  rappel  soit  nécessaire.  /  Décret  n°  2012-1115 du  2  octobre  2012  A  compter  du  1er  janvier 2013, tout professionnel en situation de retard de paiement devient de plein droit débiteur, à l'égard de son créancier, (...) d'une indemnité forfaitaire pour frais de recouvrement de 40 euros."
-              //   isEntrepriseFr : "",
+              loi_entreprise_française: "Art. L 441-6 du Code de commerce : Sauf disposition contraire qui ne peut toutefois fixer un taux inférieur à trois fois le taux d'intérêt légal, ce taux est égal au taux d'intérêt appliqué par la BCE majoré de 10 points de pourcentage (...) Les pénalités de retard sont exigibles sans qu'un rappel soit nécessaire. / Décret n° 2012-1115 du 2 octobre 2012 A compter du 1er janvier 2013, tout professionnel en situation de retard de paiement devient de plein droit débiteur, à l'égard de son créancier, (...) d'une indemnité forfaitaire pour frais de recouvrement de 40 euros.",
+              isEntrepriseFrançaise : result.taux_interets === 10 ? true : false,
+              isEntrepriseItalienne : result.taux_interets === 8 ? true : false,
             });
 
             // debtor's name for the filename
@@ -96,13 +110,13 @@ module.exports = {
               .writeFile(
                 path.resolve(
                   __dirname,
-                  `../public/documents/Tableau calcul intérêts - ${creancier_filename} contre ${debiteur_filename}.docx`
+                  `../public/documents/${today_file} - Tableau calcul intérêts - ${creancier_filename} contre ${debiteur_filename}.docx`
                 ),
                 buf
               )
               .then(() =>
                 res.send(
-                  `Tableau calcul intérêts - ${creancier_filename} contre ${debiteur_filename}.docx`
+                  `${today_file} - Tableau calcul intérêts - ${creancier_filename} contre ${debiteur_filename}.docx`
                 )
               )
               .catch(err => console.log(err));

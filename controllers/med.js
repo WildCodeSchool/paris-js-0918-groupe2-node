@@ -302,16 +302,19 @@ module.exports = {
                   };
                 });
               }),
-              calcul_creance_principale_HT: "",
-              calcul_creance_principale_TTC: "",
-              isProduits: result.produits == true ? true : false,
-              isServices: result.services == true ? true : false,
+              calcul_creance_principale_HT: result.calcul_solde_du,
+              calcul_creance_principale_TTC: result.calcul_total_creance,
+              isCreanceHT : result.option_ttc_factures === false ? true : false,
+              isCreanceTTC : result.option_ttc_factures === true ? true : false,
+              isProduitsServices : result.produits && result.services === true ? true : false,
+              isProduits: result.produits === true && result.services == false ? "produits vendus" : false,
+              isServices: result.services == true && result.produits == false ? "services fournis" : false,
               entreprise_française:
-                "En application de l’article L. 441-6 du Code de commerce,les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 10 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitairepour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
+                "En application de l’article L. 441-6 du Code de commerce, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 10 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               entreprise_italienne:
                 "En application du décret législatif italien du 9 novembre 2012 n°192 y compris ses modifications ultérieures, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 8 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
-              // isFrançaise : result.,
-              // isItalienne: ,
+              isEntrepriseFrançaise : result.taux_interets === 10 ? true : false,
+              isEntrepriseItalienne: result.taux_interets === 8 ? true : false,
               calcul_total_interets: "",
               montant_honoraires: result.honoraires,
               isMontantHono: result.honoraires !== 0 ? true : false,
