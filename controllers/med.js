@@ -29,7 +29,7 @@ module.exports = {
       })
       .then(async result => {
         let myFinalAlgoResult = [];
-
+        let myFinalAlgoResultSorted = [];
         if (result.option_ttc_factures === true) {
           for (let i = 0; i < result.factures.length; i++) {
             let facture = {
@@ -126,7 +126,6 @@ module.exports = {
           }
         }
         // console.log(JSON.stringify(myFinalAlgoResult, null, 2));
-        let myFinalAlgoResultSorted = [];
 
         // myFinalAlgoResultSorted retourne un objet de ce style
         //   [ { facture_0:
@@ -136,12 +135,12 @@ module.exports = {
         //  { facture_1:
         //     [ [Object], [Object], [Object] ] } ]
         // chaque objet est composé de la sorte:
-        // { date_debut: '01/07/2018',
+        // facture_0: [{ date_debut: '01/07/2018',
         // date_fin: '20/12/2018',
         // creance_sur_cette_periode: 7300,
         // nbre_jours_comptabilises: 173,
         // interets_periode: 346,
-        // taux_interet_applique: 0 }
+        // taux_interet_applique: 0 }]
 
         for (let i = 0; i < myFinalAlgoResult.length; i++) {
           let numberFacture = "facture_";
@@ -165,7 +164,35 @@ module.exports = {
 
           myFinalAlgoResultSorted.push({ [numberFacture + i]: mySortedResult });
         }
-        // console.log(myFinalAlgoResultSorted);
+
+        // console.log(JSON.stringify(myFinalAlgoResultSorted));
+
+        let getSum = (total, num) => {
+          return total + num;
+        };
+
+        let totalDesInteretsParAction = [];
+
+        for (let i = 0; i < myFinalAlgoResultSorted.length; i++) {
+          Object.keys(myFinalAlgoResultSorted[i]).forEach(function(key, index) {
+            totalDesInteretsParAction.push(myFinalAlgoResultSorted[i][key]);
+          });
+        }
+
+        let totalDesInteretsParAction2 = [];
+
+        for (let i = 0; i < totalDesInteretsParAction.length; i++) {
+          for (let j = 0; j < totalDesInteretsParAction[i].length; j++) {
+            totalDesInteretsParAction2.push(
+              totalDesInteretsParAction[i][j].interets_periode
+            );
+          }
+        }
+
+        let myFinalInterestSum = parseFloat(
+          totalDesInteretsParAction2.reduce(getSum).toFixed(2)
+        );
+        // console.log(myFinalInterestSum);
 
         //Load the docx file as a binary
         fsPromises
@@ -287,36 +314,36 @@ module.exports = {
                 };
               }),
               acomptes: lesAcomptes.map(acompte => {
-                  return {
-                    numero_acompte: acompte.num_acompte,
-                    date_acompte: acompte.date_acompte,
-                    montant_acompte_ht: acompte.montant_ht,
-                    isAcomptesHT:
-                      result.option_ttc_factures == false
-                        ? acompte.montant_ht
-                        : false,
-                    montant_acompte_ttc: acompte.montant_ttc,
-                    isAcomptesTTC:
-                      result.option_ttc_factures == true
-                        ? acompte.montant_ttc
-                        : false
-                  };
+                return {
+                  numero_acompte: acompte.num_acompte,
+                  date_acompte: acompte.date_acompte,
+                  montant_acompte_ht: acompte.montant_ht,
+                  isAcomptesHT:
+                    result.option_ttc_factures == false
+                      ? acompte.montant_ht
+                      : false,
+                  montant_acompte_ttc: acompte.montant_ttc,
+                  isAcomptesTTC:
+                    result.option_ttc_factures == true
+                      ? acompte.montant_ttc
+                      : false
+                };
               }),
               partiels: lesPartiels.map(partiel => {
-                  return {
-                    numero_partiel: partiel.num_partiel,
-                    date_partiel: partiel.date_partiel,
-                    montant_partiel_ht: partiel.montant_ht,
-                    isPartielsHT:
-                      result.option_ttc_factures == false
-                        ? partiel.montant_ht
-                        : false,
-                    montant_partiel_ttc: partiel.montant_ttc,
-                    isPartielsTTC:
-                      result.option_ttc_factures == true
-                        ? partiel.montant_ttc
-                        : false
-                  };
+                return {
+                  numero_partiel: partiel.num_partiel,
+                  date_partiel: partiel.date_partiel,
+                  montant_partiel_ht: partiel.montant_ht,
+                  isPartielsHT:
+                    result.option_ttc_factures == false
+                      ? partiel.montant_ht
+                      : false,
+                  montant_partiel_ttc: partiel.montant_ttc,
+                  isPartielsTTC:
+                    result.option_ttc_factures == true
+                      ? partiel.montant_ttc
+                      : false
+                };
               }),
               calcul_creance_principale_HT: result.calcul_solde_du,
               calcul_creance_principale_TTC: result.calcul_total_creance,
