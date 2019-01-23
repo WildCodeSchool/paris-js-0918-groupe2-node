@@ -319,7 +319,7 @@ module.exports = {
               .writeFile(
                 path.resolve(
                   __dirname,
-                  `../public/documents/${today_file} - Tableau calcul intérêts - ${creancier_filename} contre ${debiteur_filename}.docx`
+                  `../public/documents/${today_file} - Tableau de calcul des intérêts - ${creancier_filename} contre ${debiteur_filename}.docx`
                 ),
                 buf
               )
