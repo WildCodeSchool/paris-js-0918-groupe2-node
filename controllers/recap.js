@@ -256,6 +256,8 @@ module.exports = {
           tabTTC.push([creanceTotaleSansPartielsTTC[i]]);
         }
 
+        console.log(tabTTC)
+
         let tabHT = [];
         for (let i = 0; i < creanceTotaleSansPartielsHT.length; i++) {
           tabHT.push([creanceTotaleSansPartielsHT[i]]);
