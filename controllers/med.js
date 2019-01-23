@@ -4,6 +4,7 @@ const Docxtemplater = require("docxtemplater");
 const algo = require("../dojoalgo").maSuperMetaFonction;
 const moment = require("moment");
 moment().format();
+moment.locale("fr");
 
 const fs = require("fs");
 const fsPromises = fs.promises;
@@ -29,7 +30,7 @@ module.exports = {
         ]
       })
       .then(async result => {
-        console.log(result);
+        // console.log(result);
         let myFinalAlgoResult = [];
         let myFinalAlgoResultSorted = [];
         let nbreFactures = result.factures.length;
@@ -226,6 +227,12 @@ module.exports = {
             }
 
             today = dd + "/" + mm + "/" + yyyy; // date for the word document
+            let myTodayMoment = moment(today, "DD/MM/YYYY", true);
+            let moisEnLettres = myTodayMoment.format("MMMM");
+            let jourEnChiffres = myTodayMoment.format("Do");
+            let anneeEnChiffres = myTodayMoment.format("YYYY");
+            let fullDate = `${jourEnChiffres} ${moisEnLettres} ${anneeEnChiffres}`;
+            // console.log(fullDate);
             today_file = dd + "-" + mm + "-" + yyyy; // date for the file name
 
             let lesAvoirs = [];
@@ -276,7 +283,7 @@ module.exports = {
               adresse_debiteur: result.debiteur.adresse_siege,
               code_postal_debiteur: result.debiteur.code_postal_siege,
               ville_debiteur: result.debiteur.ville_siege,
-              date_mise_en_demeure: today,
+              date_mise_en_demeure: fullDate,
               denomination_sociale_creancier:
                 result.creancier.denomination_sociale,
               nationalite_creancier: result.creancier.nationalite_societe,
@@ -293,14 +300,10 @@ module.exports = {
                   date_facture: facture.date_facture,
                   montant_facture_ht: facture.montant_ht,
                   isFacturestHT:
-                    result.option_ttc_factures === false
-                      ? true
-                      : false,
+                    result.option_ttc_factures === false ? true : false,
                   montant_facture_ttc: facture.montant_ttc,
                   isFacturesTTC:
-                    result.option_ttc_factures === true
-                      ? true
-                      : false,
+                    result.option_ttc_factures === true ? true : false,
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
                   isPaiementEcheance:
