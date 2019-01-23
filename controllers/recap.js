@@ -1,6 +1,9 @@
 const models = require("../models");
 const JSZip = require("jszip");
 const Docxtemplater = require("docxtemplater");
+const algo = require("../dojoalgo").maSuperMetaFonction;
+const moment = require("moment");
+moment().format();
 
 const fs = require("fs");
 const fsPromises = fs.promises;
@@ -16,15 +19,154 @@ module.exports = {
           { model: models.debiteur },
           {
             model: models.facture,
-            include: [{ model: models.acompte }, { model: models.avoir }]
+            include: [
+              { model: models.acompte },
+              { model: models.avoir },
+              { model: models.partiel }
+            ]
           }
         ]
       })
-      .then(result => {
-        // Algo de calcul + concat de result
-        // then => Generation de document
+      .then(async result => {
+        let myFinalAlgoResult = [];
+        let myFinalAlgoResultSorted = [];
+        let nbreFactures = result.factures.length;
+        if (result.option_ttc_factures === true) {
+          for (let i = 0; i < result.factures.length; i++) {
+            let facture = {
+              montant_ttc: result.factures[i].montant_ttc,
+              echeance_facture: result.factures[i].echeance_facture
+            };
 
-        //Load the docx file as a binary
+            let mesAcomptes = [];
+
+            for (let j = 0; j < result.factures[i].acomptes.length; j++) {
+              mesAcomptes.push({
+                montant_ttc: result.factures[i].acomptes[j].montant_ttc
+              });
+            }
+
+            let mesAvoirs = [];
+
+            for (let k = 0; k < result.factures[i].avoirs.length; k++) {
+              mesAvoirs.push({
+                montant_ttc: result.factures[i].avoirs[k].montant_ttc
+              });
+            }
+
+            let mesPaiementsPartiels = [];
+
+            for (let l = 0; l < result.factures[i].partiels.length; l++) {
+              mesPaiementsPartiels.push({
+                montant_ttc: result.factures[i].partiels[l].montant_ttc,
+                date_partiel: result.factures[i].partiels[l].date_partiel
+              });
+            }
+
+            let dateFinCalculInterets = result.date;
+            let points = result.taux_interets;
+            let facture_number = "facture";
+
+            myFinalAlgoResult.push({
+              [facture_number]: await algo(
+                facture,
+                mesAcomptes,
+                mesAvoirs,
+                mesPaiementsPartiels,
+                dateFinCalculInterets,
+                points
+              )
+            });
+          }
+        } else {
+          for (let i = 0; i < result.factures.length; i++) {
+            let facture = {
+              montant_ttc: result.factures[i].montant_ht,
+              echeance_facture: result.factures[i].echeance_facture
+            };
+
+            let mesAcomptes = [];
+
+            for (let j = 0; j < result.factures[i].acomptes.length; j++) {
+              mesAcomptes.push({
+                montant_ttc: result.factures[i].acomptes[j].montant_ht
+              });
+            }
+
+            let mesAvoirs = [];
+
+            for (let k = 0; k < result.factures[i].avoirs.length; k++) {
+              mesAvoirs.push({
+                montant_ttc: result.factures[i].avoirs[k].montant_ht
+              });
+            }
+
+            let mesPaiementsPartiels = [];
+
+            for (let l = 0; l < result.factures[i].partiels.length; l++) {
+              mesPaiementsPartiels.push({
+                montant_ttc: result.factures[i].partiels[l].montant_ht,
+                date_partiel: result.factures[i].partiels[l].date_partiel
+              });
+            }
+
+            let dateFinCalculInterets = result.date;
+            let points = result.taux_interets;
+            let facture_number = "facture";
+
+            myFinalAlgoResult.push({
+              [facture_number]: await algo(
+                facture,
+                mesAcomptes,
+                mesAvoirs,
+                mesPaiementsPartiels,
+                dateFinCalculInterets,
+                points
+              )
+            });
+          }
+        }
+        // console.log(JSON.stringify(myFinalAlgoResult, null, 2));
+
+        // myFinalAlgoResultSorted retourne un objet de ce style
+        //   [ { facture_0:
+        //     [ [Object],
+        //       [Object],
+        //       [Object] ] },
+        //  { facture_1:
+        //     [ [Object], [Object], [Object] ] } ]
+        // chaque objet est composé de la sorte:
+        // facture_0: [{ date_debut: '01/07/2018',
+        // date_fin: '20/12/2018',
+        // creance_sur_cette_periode: 7300,
+        // nbre_jours_comptabilises: 173,
+        // interets_periode: 346,
+        // taux_interet_applique: 0 }]
+
+        for (let i = 0; i < myFinalAlgoResult.length; i++) {
+          let numberFacture = "facture_";
+
+          let mySortedResult = myFinalAlgoResult[i].facture.sort(
+            (item, otherItem) => {
+              dateDebutPremierItem = moment(
+                item.date_debut,
+                "DD/MM/YYYY",
+                true
+              );
+              dateDebutSecondItem = moment(
+                otherItem.date_debut,
+                "DD/MM/YYYY",
+                true
+              );
+              let mySorted = dateDebutPremierItem.diff(dateDebutSecondItem);
+              return -mySorted;
+            }
+          );
+
+          myFinalAlgoResultSorted.push({ [numberFacture + i]: mySortedResult });
+        }
+
+
         fsPromises
           .readFile(
             path.resolve(
@@ -61,16 +203,15 @@ module.exports = {
               factures: result.factures.map(facture => {
                 return {
                   numero_facture: facture.num_facture,
-                  date_facture: facture.date_facture
+                  date_facture: facture.date_facture,
+                  echeance_facture: facture.echeance_facture
                 };
               }),
-              // numero_facture: result.factures.num_facture,
-              // date_facture: result.factures.date_facture,
               calcul_creance_principale_HT: "",
               calcul_creance_principale_TTC: "",
               taux_BCE: "",
-              points_entreprise_française: "taux BCE + 10 points",
-              points_entreprise_italienne: "taux BCE + 8 points",
+              points_entreprise_française: "de 10 points",
+              points_entreprise_italienne: "de 8 points",
               date_debut: "",
               date_fin: "",
               nombre_jours_interets: "",
