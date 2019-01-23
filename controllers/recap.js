@@ -176,7 +176,7 @@ module.exports = {
                 true
               );
               let mySorted = dateDebutPremierItem.diff(dateDebutSecondItem);
-              return -mySorted;
+              return +mySorted;
             }
           );
 
@@ -184,15 +184,22 @@ module.exports = {
           myFinalAlgoResultSortedNoNumber.push({ facture: mySortedResult });
         }
 
-
-        let infosRecap = []
+        let infosRecap = [];
         for (let i = 0; i < myFinalAlgoResultSorted.length; i++) {
           Object.keys(myFinalAlgoResultSorted[i]).forEach(function(key, index) {
             infosRecap.push(myFinalAlgoResultSorted[i][key]);
           });
         }
 
-        let recap = []
+        let recap = [];
+
+        for (let i = 0; i < infosRecap.length; i++) {
+          for (let j = 0; j < infosRecap[i].length; j++) {
+            recap.push(infosRecap[i][j]);
+          }
+        }
+
+        // console.log(recap)
 
         ////////////////////////////////////////////////////
         // CETTE SECTION SERT A CALCULER LE MONTANT TOTAL //
@@ -242,13 +249,17 @@ module.exports = {
         //                                                //
         ////////////////////////////////////////////////////
 
+        let tabTTC = [];
 
-        for (let i = 0; i < infosRecap.length; i++) {
-          for (let j = 0; j < infosRecap[i].length; j++) {
-            recap.push(infosRecap[i][j])
-           }
+        for (let i = 0; i < creanceTotaleSansPartielsTTC.length; i++) {
+          tabTTC.push([creanceTotaleSansPartielsTTC[i]]);
         }
-    
+
+        let tabHT = [];
+        for (let i = 0; i < creanceTotaleSansPartielsHT.length; i++) {
+          tabHT.push([creanceTotaleSansPartielsHT[i]]);
+        }
+
         fsPromises
           .readFile(
             path.resolve(
@@ -288,7 +299,11 @@ module.exports = {
                 return {
                   numero_facture: facture.num_facture,
                   date_facture: facture.date_facture,
-                  echeance_facture: facture.echeance_facture
+                  echeance_facture: facture.echeance_facture,
+                  montant_facture_HT: facture.montant_ht,
+                  isFacturestHT: result.option_ttc_factures === false ? true : false,
+                  montant_facture_TTC: facture.montant_ttc,
+                  isFacturesTTC: result.option_ttc_factures === true ? true : false,
                 };
               }),
               calcul_creance_principale_HT: "",
@@ -297,23 +312,33 @@ module.exports = {
               points_entreprise_française: "de 10 points",
               points_entreprise_italienne: "de 8 points",
               infoRecap: recap.map(info => {
-                return{
-                date_debut: info.date_debut,
-                date_fin: info.date_fin,
-                nombre_jours_interets: info.nbre_jours_comptabilises,
-                tauxFr: info.taux_interet_applique + 10,
-                tauxIt : info.taux_interet_applique + 8,
-                isTauxFr : result.taux_interets === 10 ? true : false,
-                isTauxIt : result.taux_interets === 8 ? true : false,
-                montant_interets: info.interets_periode.toFixed(2),
-              }
+                return {
+                  date_debut: info.date_debut,
+                  date_fin: info.date_fin,
+                  nombre_jours_interets: info.nbre_jours_comptabilises,
+                  tauxFr: info.taux_interet_applique + 10,
+                  tauxIt: info.taux_interet_applique + 8,
+                  isTauxFr: result.taux_interets === 10 ? true : false,
+                  isTauxIt: result.taux_interets === 8 ? true : false,
+                  montant_interets: info.interets_periode.toFixed(2),
+                  montant_creance: info.creance_sur_cette_periode
+                };
               }),
-              tauxFrançais : "",
-              tauxItalien : "",
-             
+              tableauTTC: tabTTC.map(newTabTTC => {
+                return {
+                  montant_ttc: newTabTTC,
+                  isTTC: result.option_ttc_factures === true ? true : false
+                };
+              }),
+              tableauHT: tabHT.map(newTabHT => {
+                return {
+                  montant_ht: newTabHT,
+                  isHT: result.option_ttc_factures === false ? true : false
+                };
+              }),
               date_reglement_acompte: "",
               montant_acompte: "",
-              montant_total_interets: "",
+              montant_total_interets: montantTotalInteretsToutesFactures,
               loi_entreprise_française:
                 "Art. L 441-6 du Code de commerce : Sauf disposition contraire qui ne peut toutefois fixer un taux inférieur à trois fois le taux d'intérêt légal, ce taux est égal au taux d'intérêt appliqué par la BCE majoré de 10 points de pourcentage (...) Les pénalités de retard sont exigibles sans qu'un rappel soit nécessaire. / Décret n° 2012-1115 du 2 octobre 2012 A compter du 1er janvier 2013, tout professionnel en situation de retard de paiement devient de plein droit débiteur, à l'égard de son créancier, (...) d'une indemnité forfaitaire pour frais de recouvrement de 40 euros.",
               isEntrepriseFrançaise: result.taux_interets === 10 ? true : false,

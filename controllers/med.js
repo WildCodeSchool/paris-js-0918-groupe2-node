@@ -291,13 +291,13 @@ module.exports = {
                   date_facture: facture.date_facture,
                   montant_facture_ht: facture.montant_ht,
                   isFacturestHT:
-                    result.option_ttc_factures == false
-                      ? facture.montant_ht
+                    result.option_ttc_factures === false
+                      ? true
                       : false,
                   montant_facture_ttc: facture.montant_ttc,
                   isFacturesTTC:
-                    result.option_ttc_factures == true
-                      ? facture.montant_ttc
+                    result.option_ttc_factures === true
+                      ? true
                       : false,
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
