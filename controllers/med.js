@@ -30,11 +30,7 @@ module.exports = {
       .then(async result => {
         let myFinalAlgoResult = [];
         let myFinalAlgoResultSorted = [];
-<<<<<<< HEAD
-
-=======
         let nbreFactures = result.factures.length;
->>>>>>> 359ed1af2051162ff862478fa368e868ad3ccbdc
         if (result.option_ttc_factures === true) {
           for (let i = 0; i < result.factures.length; i++) {
             let facture = {
@@ -170,7 +166,7 @@ module.exports = {
           myFinalAlgoResultSorted.push({ [numberFacture + i]: mySortedResult });
         }
 
-        // console.log(JSON.stringify(myFinalAlgoResultSorted));
+        // console.log(myFinalAlgoResultSorted);
 
         let getSum = (total, num) => {
           return total + num;
@@ -252,10 +248,17 @@ module.exports = {
               }
             }
 
-            let fraisRecouvrement = nbreFactures * 40
-            let totalCreanceTTC = result.calcul_total_creance + result.honoraires + myFinalInterestSum + fraisRecouvrement;
-            let totalCreanceHT = result.calcul_solde_du + result.honoraires + myFinalInterestSum + fraisRecouvrement
-            
+            let fraisRecouvrement = nbreFactures * 40;
+            let totalCreanceTTC =
+              result.calcul_total_creance +
+              result.honoraires +
+              myFinalInterestSum +
+              fraisRecouvrement;
+            let totalCreanceHT =
+              result.calcul_solde_du +
+              result.honoraires +
+              myFinalInterestSum +
+              fraisRecouvrement;
 
             doc.setData({
               denomination_sociale_debiteur:
