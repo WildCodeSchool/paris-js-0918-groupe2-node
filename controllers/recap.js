@@ -19,10 +19,11 @@ module.exports = {
           { model: models.debiteur },
           {
             model: models.facture,
+            where: { active: true },
             include: [
-              { model: models.acompte },
-              { model: models.avoir },
-              { model: models.partiel }
+              { model: models.acompte, where: { active: true } },
+              { model: models.avoir, where: { active: true } },
+              { model: models.partiel, where: { active: true } }
             ]
           }
         ]

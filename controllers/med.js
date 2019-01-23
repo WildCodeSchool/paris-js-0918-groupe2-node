@@ -19,15 +19,17 @@ module.exports = {
           { model: models.debiteur },
           {
             model: models.facture,
+            where: { active: true },
             include: [
-              { model: models.acompte },
-              { model: models.avoir },
-              { model: models.partiel }
+              { model: models.acompte, where: { active: true } },
+              { model: models.avoir, where: { active: true } },
+              { model: models.partiel, where: { active: true } }
             ]
           }
         ]
       })
       .then(async result => {
+        console.log(result);
         let myFinalAlgoResult = [];
         let myFinalAlgoResultSorted = [];
         let nbreFactures = result.factures.length;
@@ -240,7 +242,7 @@ module.exports = {
                 lesAcomptes.push(result.factures[i].acomptes[j]);
               }
             }
-            
+
             let lesPartiels = [];
             for (let i = 0; i < result.factures.length; i++) {
               for (let j = 0; j < result.factures[i].partiels.length; j++) {
