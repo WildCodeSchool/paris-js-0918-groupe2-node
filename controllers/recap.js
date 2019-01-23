@@ -30,7 +30,10 @@ module.exports = {
       .then(async result => {
         let myFinalAlgoResult = [];
         let myFinalAlgoResultSorted = [];
+        let myFinalAlgoResultSortedNoNumber = [];
         let nbreFactures = result.factures.length;
+        let creanceTotaleSansPartielsTTC = [];
+        let creanceTotaleSansPartielsHT = [];
         if (result.option_ttc_factures === true) {
           for (let i = 0; i < result.factures.length; i++) {
             let facture = {
@@ -38,12 +41,16 @@ module.exports = {
               echeance_facture: result.factures[i].echeance_facture
             };
 
+            creanceTotaleSansPartielsTTC.push(result.factures[i].montant_ttc);
+
             let mesAcomptes = [];
 
             for (let j = 0; j < result.factures[i].acomptes.length; j++) {
               mesAcomptes.push({
                 montant_ttc: result.factures[i].acomptes[j].montant_ttc
               });
+              creanceTotaleSansPartielsTTC[i] -=
+                result.factures[i].acomptes[j].montant_ttc;
             }
 
             let mesAvoirs = [];
@@ -52,6 +59,8 @@ module.exports = {
               mesAvoirs.push({
                 montant_ttc: result.factures[i].avoirs[k].montant_ttc
               });
+              creanceTotaleSansPartielsTTC[i] -=
+                result.factures[i].avoirs[k].montant_ttc;
             }
 
             let mesPaiementsPartiels = [];
@@ -77,6 +86,7 @@ module.exports = {
                 points
               )
             });
+            // console.log(creanceTotaleSansPartielsTTC);
           }
         } else {
           for (let i = 0; i < result.factures.length; i++) {
@@ -85,12 +95,16 @@ module.exports = {
               echeance_facture: result.factures[i].echeance_facture
             };
 
+            creanceTotaleSansPartielsHT.push(result.factures[i].montant_ht);
+
             let mesAcomptes = [];
 
             for (let j = 0; j < result.factures[i].acomptes.length; j++) {
               mesAcomptes.push({
                 montant_ttc: result.factures[i].acomptes[j].montant_ht
               });
+              creanceTotaleSansPartielsHT[i] -=
+                result.factures[i].acomptes[j].montant_ht;
             }
 
             let mesAvoirs = [];
@@ -99,6 +113,8 @@ module.exports = {
               mesAvoirs.push({
                 montant_ttc: result.factures[i].avoirs[k].montant_ht
               });
+              creanceTotaleSansPartielsHT[i] -=
+                result.factures[i].avoirs[k].montant_ht;
             }
 
             let mesPaiementsPartiels = [];
@@ -126,6 +142,7 @@ module.exports = {
             });
           }
         }
+
         // console.log(JSON.stringify(myFinalAlgoResult, null, 2));
 
         // myFinalAlgoResultSorted retourne un objet de ce style
@@ -164,8 +181,56 @@ module.exports = {
           );
 
           myFinalAlgoResultSorted.push({ [numberFacture + i]: mySortedResult });
+          myFinalAlgoResultSortedNoNumber.push({ facture: mySortedResult });
         }
 
+        ////////////////////////////////////////////////////
+        // CETTE SECTION SERT A CALCULER LE MONTANT TOTAL //
+        // DES INTERETS POUR TTES LES FACTURES            //
+        ////////////////////////////////////////////////////
+
+        let montantTotalInterets = 0;
+
+        for (let i = 0; i < myFinalAlgoResultSortedNoNumber.length; i++) {
+          for (
+            let j = 0;
+            j < myFinalAlgoResultSortedNoNumber[i].facture.length;
+            j++
+          ) {
+            montantTotalInterets +=
+              myFinalAlgoResultSortedNoNumber[i].facture[j].interets_periode;
+          }
+        }
+
+        let montantTotalInteretsToutesFactures = parseFloat(
+          montantTotalInterets.toFixed(2)
+        );
+
+        ////////////////////////////////////////////////////
+        //               FIN DE SECTION                   //
+        //                                                //
+        ////////////////////////////////////////////////////
+
+        /////////////////////////////////////////////////////////////////
+        // CETTE SECTION EXPLIQUE COMMENT EST CALCULE LE MONTANT TOTAL //
+        // DE LA CREANCE MOINS LES ACOMPTES ET AVOIRS                  //
+        // DEJA PAYES (MAIS SANS LES PAIEMENTS PARTIELS)               //
+        ////////////////////////////////////////////////////////////////
+
+        // console.log(creanceTotaleSansPartielsTTC, creanceTotaleSansPartielsHT);
+
+        // creanceTotaleSansPartielsTTC sera rempli comme un tableau d'entiers
+        // uniquement si option_ttc_factures est réglé sur true dans l'action
+
+        // creanceTotaleSansPartielsHT sera rempli comme un tableau d'entiers
+        // uniquement si option_ttc_factures est réglé sur false dans l'action
+
+        // si le tableau TTC est rempli, celui en HT sera vide et vice versa.
+
+        ////////////////////////////////////////////////////
+        //               FIN DE SECTION                   //
+        //                                                //
+        ////////////////////////////////////////////////////
 
         fsPromises
           .readFile(
@@ -198,8 +263,10 @@ module.exports = {
             today_file = dd + "-" + mm + "-" + yyyy; // date for the file name
 
             doc.setData({
-              denomination_sociale_creancier: result.creancier.denomination_sociale,
-              denomination_sociale_debiteur: result.debiteur.denomination_sociale,
+              denomination_sociale_creancier:
+                result.creancier.denomination_sociale,
+              denomination_sociale_debiteur:
+                result.debiteur.denomination_sociale,
               factures: result.factures.map(facture => {
                 return {
                   numero_facture: facture.num_facture,
@@ -220,9 +287,10 @@ module.exports = {
               date_reglement_acompte: "",
               montant_acompte: "",
               montant_total_interets: "",
-              loi_entreprise_française: "Art. L 441-6 du Code de commerce : Sauf disposition contraire qui ne peut toutefois fixer un taux inférieur à trois fois le taux d'intérêt légal, ce taux est égal au taux d'intérêt appliqué par la BCE majoré de 10 points de pourcentage (...) Les pénalités de retard sont exigibles sans qu'un rappel soit nécessaire. / Décret n° 2012-1115 du 2 octobre 2012 A compter du 1er janvier 2013, tout professionnel en situation de retard de paiement devient de plein droit débiteur, à l'égard de son créancier, (...) d'une indemnité forfaitaire pour frais de recouvrement de 40 euros.",
-              isEntrepriseFrançaise : result.taux_interets === 10 ? true : false,
-              isEntrepriseItalienne : result.taux_interets === 8 ? true : false,
+              loi_entreprise_française:
+                "Art. L 441-6 du Code de commerce : Sauf disposition contraire qui ne peut toutefois fixer un taux inférieur à trois fois le taux d'intérêt légal, ce taux est égal au taux d'intérêt appliqué par la BCE majoré de 10 points de pourcentage (...) Les pénalités de retard sont exigibles sans qu'un rappel soit nécessaire. / Décret n° 2012-1115 du 2 octobre 2012 A compter du 1er janvier 2013, tout professionnel en situation de retard de paiement devient de plein droit débiteur, à l'égard de son créancier, (...) d'une indemnité forfaitaire pour frais de recouvrement de 40 euros.",
+              isEntrepriseFrançaise: result.taux_interets === 10 ? true : false,
+              isEntrepriseItalienne: result.taux_interets === 8 ? true : false
             });
 
             // debtor's name for the filename
