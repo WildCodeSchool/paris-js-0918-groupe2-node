@@ -240,7 +240,7 @@ module.exports = {
                 lesAcomptes.push(result.factures[i].acomptes[j]);
               }
             }
-
+            
             let lesPartiels = [];
             for (let i = 0; i < result.factures.length; i++) {
               for (let j = 0; j < result.factures[i].partiels.length; j++) {
