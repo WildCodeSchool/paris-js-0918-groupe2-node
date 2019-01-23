@@ -19,10 +19,11 @@ module.exports = {
           { model: models.debiteur },
           {
             model: models.facture,
+            where: { active: true },
             include: [
-              { model: models.acompte },
-              { model: models.avoir },
-              { model: models.partiel }
+              { model: models.acompte, where: { active: true } },
+              { model: models.avoir, where: { active: true } },
+              { model: models.partiel, where: { active: true } }
             ]
           }
         ]
@@ -184,15 +185,14 @@ module.exports = {
           myFinalAlgoResultSortedNoNumber.push({ facture: mySortedResult });
         }
 
-
-        let infosRecap = []
+        let infosRecap = [];
         for (let i = 0; i < myFinalAlgoResultSorted.length; i++) {
           Object.keys(myFinalAlgoResultSorted[i]).forEach(function(key, index) {
             infosRecap.push(myFinalAlgoResultSorted[i][key]);
           });
         }
 
-        let recap = []
+        let recap = [];
 
         ////////////////////////////////////////////////////
         // CETTE SECTION SERT A CALCULER LE MONTANT TOTAL //
@@ -242,13 +242,12 @@ module.exports = {
         //                                                //
         ////////////////////////////////////////////////////
 
-
         for (let i = 0; i < infosRecap.length; i++) {
           for (let j = 0; j < infosRecap[i].length; j++) {
-            recap.push(infosRecap[i][j])
-           }
+            recap.push(infosRecap[i][j]);
+          }
         }
-    
+
         fsPromises
           .readFile(
             path.resolve(
@@ -297,20 +296,20 @@ module.exports = {
               points_entreprise_française: "de 10 points",
               points_entreprise_italienne: "de 8 points",
               infoRecap: recap.map(info => {
-                return{
-                date_debut: info.date_debut,
-                date_fin: info.date_fin,
-                nombre_jours_interets: info.nbre_jours_comptabilises,
-                tauxFr: info.taux_interet_applique + 10,
-                tauxIt : info.taux_interet_applique + 8,
-                isTauxFr : result.taux_interets === 10 ? true : false,
-                isTauxIt : result.taux_interets === 8 ? true : false,
-                montant_interets: info.interets_periode.toFixed(2),
-              }
+                return {
+                  date_debut: info.date_debut,
+                  date_fin: info.date_fin,
+                  nombre_jours_interets: info.nbre_jours_comptabilises,
+                  tauxFr: info.taux_interet_applique + 10,
+                  tauxIt: info.taux_interet_applique + 8,
+                  isTauxFr: result.taux_interets === 10 ? true : false,
+                  isTauxIt: result.taux_interets === 8 ? true : false,
+                  montant_interets: info.interets_periode.toFixed(2)
+                };
               }),
-              tauxFrançais : "",
-              tauxItalien : "",
-             
+              tauxFrançais: "",
+              tauxItalien: "",
+
               date_reglement_acompte: "",
               montant_acompte: "",
               montant_total_interets: "",
