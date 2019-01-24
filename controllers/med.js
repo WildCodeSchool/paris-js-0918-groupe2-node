@@ -13,6 +13,7 @@ const path = require("path");
 
 module.exports = {
   createMed: (req, res) => {
+    console.log("yolo", req.params);
     models.action
       .findByPk(req.params.id, {
         include: [
@@ -30,10 +31,11 @@ module.exports = {
         ]
       })
       .then(async result => {
-        // console.log(result);
+        // console.log("poulet1", result);
         let myFinalAlgoResult = [];
         let myFinalAlgoResultSorted = [];
         let nbreFactures = result.factures.length;
+        // console.log(nbreFactures)
         if (result.option_ttc_factures === true) {
           for (let i = 0; i < result.factures.length; i++) {
             let facture = {
@@ -103,7 +105,7 @@ module.exports = {
                 montant_ttc: result.factures[i].avoirs[k].montant_ht
               });
             }
-            
+
             let mesPaiementsPartiels = [];
 
             for (let l = 0; l < result.factures[i].partiels.length; l++) {
@@ -257,7 +259,7 @@ module.exports = {
               }
             }
 
-            console.log(JSON.stringify(lesPartiels, null, 2))
+            console.log(JSON.stringify(lesPartiels, null, 2));
 
             let fraisRecouvrement = nbreFactures * 40;
             let totalCreanceTTC =

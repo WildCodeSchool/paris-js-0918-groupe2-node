@@ -85,6 +85,7 @@ const maSuperMetaFonction = async (
     };
 
     const totalCreance = getTotalCreance(facture, mesAcomptes, mesAvoirs);
+    // console.log(totalCreance);
 
     const getDateRangesWithInterestRates = (startDate, endDate) => {
       let depart_echeance = moment(startDate, "DD/MM/YYYY", true).add(
