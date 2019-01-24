@@ -21,9 +21,9 @@ module.exports = {
             model: models.facture,
             where: { active: true },
             include: [
-              { model: models.acompte, where: { active: true } },
-              { model: models.avoir, where: { active: true } },
-              { model: models.partiel, where: { active: true } }
+              { model: models.acompte, where: { active: true }, required: false },
+              { model: models.avoir, where: { active: true }, required: false },
+              { model: models.partiel, where: { active: true }, required: false }
             ]
           }
         ]
@@ -185,21 +185,21 @@ module.exports = {
           myFinalAlgoResultSortedNoNumber.push({ facture: mySortedResult });
         }
 
-        let infosRecap = [];
-        for (let i = 0; i < myFinalAlgoResultSorted.length; i++) {
-          Object.keys(myFinalAlgoResultSorted[i]).forEach(function(key, index) {
-            infosRecap.push(myFinalAlgoResultSorted[i][key]);
-          });
-        }
+      //   let infosRecap = [];
+      //   for (let i = 0; i < myFinalAlgoResultSorted.length; i++) {
+      //     Object.keys(myFinalAlgoResultSorted[i]).forEach(function(key, index) {
+      //       infosRecap.push(myFinalAlgoResultSorted[i][key]);
+      //     });
+      //   }
   
-        let recap = [];
+      //   let recap = [];
 
-        for (let i = 0; i < infosRecap.length; i++) {
-          for (let j = 0; j < infosRecap[i].length; j++) {
-           recap.push(infosRecap[i][j]);   
-        }
-      }
-
+      //   for (let i = 0; i < infosRecap.length; i++) {
+      //     for (let j = 0; j < infosRecap[i].length; j++) {
+      //      recap.push(infosRecap[i][j]);   
+      //   }
+      // }
+// console.log(infosRecap)
 
         ////////////////////////////////////////////////////
         // CETTE SECTION SERT A CALCULER LE MONTANT TOTAL //
@@ -249,16 +249,16 @@ module.exports = {
         //                                                //
         ////////////////////////////////////////////////////
 
-        let tabTTC = [];
+        // let tabTTC = [];
 
-        for (let i = 0; i < creanceTotaleSansPartielsTTC.length; i++) {
-          tabTTC.push([creanceTotaleSansPartielsTTC[i]]);
-        }
+        // for (let i = 0; i < creanceTotaleSansPartielsTTC.length; i++) {
+        //   tabTTC.push([creanceTotaleSansPartielsTTC[i]]);
+        // }
 
-        let tabHT = [];
-        for (let i = 0; i < creanceTotaleSansPartielsHT.length; i++) {
-          tabHT.push([creanceTotaleSansPartielsHT[i]]);
-        }
+        // let tabHT = [];
+        // for (let i = 0; i < creanceTotaleSansPartielsHT.length; i++) {
+        //   tabHT.push([creanceTotaleSansPartielsHT[i]]);
+        // }
 
         fsPromises
           .readFile(
@@ -289,13 +289,14 @@ module.exports = {
 
             today = dd + "/" + mm + "/" + yyyy; // date for the word document
             today_file = dd + "-" + mm + "-" + yyyy; // date for the file name
+            // console.log(myFinalAlgoResultSorted)
 
             doc.setData({
               denomination_sociale_creancier:
                 result.creancier.denomination_sociale,
               denomination_sociale_debiteur:
                 result.debiteur.denomination_sociale,
-              factures: result.factures.map(facture => {
+              factures: result.factures.map((facture, index) => {
                 return {
                   numero_facture: facture.num_facture,
                   date_facture: facture.date_facture,
@@ -304,36 +305,38 @@ module.exports = {
                   isFacturesHT: result.option_ttc_factures === false ? true : false,
                   montant_facture_TTC: facture.montant_ttc,
                   isFacturesTTC: result.option_ttc_factures === true ? true : false,
-                };
+                  montant_creance: myFinalAlgoResultSorted[index][`facture_${index}`][0].creance_sur_cette_periode,
+                  infoRecap: myFinalAlgoResultSorted[index][`facture_${index}`].map(newRecap => {
+                    return {
+                      date_debut: newRecap.date_debut,
+                      date_fin: newRecap.date_fin,
+                      nombre_jours_interets: newRecap.nbre_jours_comptabilises,
+                      tauxFr: newRecap.taux_interet_applique + 10,
+                      tauxIt: newRecap.taux_interet_applique + 8,
+                      isTauxFr: result.taux_interets === 10 ? true : false,
+                      isTauxIt: result.taux_interets === 8 ? true : false,
+                      montant_interets: newRecap.interets_periode.toFixed(2),
+                      montant_creance: newRecap.creance_sur_cette_periode
+                    }
+                    }),
+              };
               }),
               taux_BCE: "",
               points_entreprise_française: "de 10 points",
               points_entreprise_italienne: "de 8 points",
-              tabRecap: recap.map(newRecap => {
-                return {
-                  date_debut: newRecap.date_debut,
-                  date_fin: newRecap.date_fin,
-                  nombre_jours_interets: newRecap.nbre_jours_comptabilises,
-                  tauxFr: newRecap.taux_interet_applique + 10,
-                  tauxIt: newRecap.taux_interet_applique + 8,
-                  isTauxFr: result.taux_interets === 10 ? true : false,
-                  isTauxIt: result.taux_interets === 8 ? true : false,
-                  montant_interets: newRecap.interets_periode.toFixed(2),
-                  montant_creance: newRecap.creance_sur_cette_periode
-                }
-                }),
-              tableauTTC: tabTTC.map(newTabTTC => {
-                return {
-                  montant_ttc: newTabTTC,
-                  isTTC: result.option_ttc_factures === true ? true : false
-                };
-              }),
-              tableauHT: tabHT.map(newTabHT => {
-                return {
-                  montant_ht: newTabHT,
-                  isHT: result.option_ttc_factures === false ? true : false
-                };
-              }),
+           
+              // tableauTTC: tabTTC.map(newTabTTC => {
+              //   return {
+              //     montant_ttc: newTabTTC,
+              //     isTTC: result.option_ttc_factures === true ? true : false
+              //   };
+              // })[0],
+              // tableauHT: tabHT.map(newTabHT => {
+              //   return {
+              //     montant_ht: newTabHT,
+              //     isHT: result.option_ttc_factures === false ? true : false
+              //   };
+              // })[0],
               date_reglement_acompte: "",
               montant_acompte: "",
               montant_total_interets: montantTotalInteretsToutesFactures,

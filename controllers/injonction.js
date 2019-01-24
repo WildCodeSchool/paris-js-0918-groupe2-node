@@ -21,9 +21,9 @@ module.exports = {
           model: models.facture,
           where: { active: true },
           include: [
-            { model: models.acompte, where: { active: true } },
-            { model: models.avoir, where: { active: true } },
-            { model: models.partiel, where: { active: true } }
+            { model: models.acompte, where: { active: true }, required: false },
+            { model: models.avoir, where: { active: true }, required: false },
+            { model: models.partiel, where: { active: true }, required: false }
           ]
         }
       ]
@@ -310,8 +310,8 @@ module.exports = {
               nom_representant_legal_debiteur: result.debiteur.nom,
               fonction_representant_legal_debiteur: result.debiteur.fonction,
               isProduitsServices : result.produits && result.services === true ? true : false,
-              isProduits: result.produits === true && result.services == false ? "produits vendus" : false,
-              isServices: result.services == true && result.produits == false ? "services fournis" : false,
+              isProduits: result.produits === true && result.services == false ? true : false,
+              isServices: result.services == true && result.produits == false ? true : false,
               denomination_sociale_debiteur: result.debiteur.denomination_sociale,
               forme_juridique_debiteur: result.debiteur.forme_juridique,
               isHT: result.option_ttc_factures === false ? true : false,

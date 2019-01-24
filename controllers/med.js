@@ -23,9 +23,9 @@ module.exports = {
             model: models.facture,
             where: { active: true },
             include: [
-              { model: models.acompte, where: { active: true } },
-              { model: models.avoir, where: { active: true } },
-              { model: models.partiel, where: { active: true } }
+              { model: models.acompte, where: { active: true }, required: false },
+              { model: models.avoir, where: { active: true }, required: false  },
+              { model: models.partiel, where: { active: true }, required: false  }
             ]
           }
         ]
@@ -310,17 +310,8 @@ module.exports = {
                     result.option_ttc_factures === true ? true : false,
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
-                  isPaiementEcheance:
-                    facture.paiement_echeance == true
-                      ? "les factures devaient être payées à"
-                      : false,
-                  isPaiementLivraison:
-                    facture.paiement_livraison == true
-                      ? result.debiteur.denomination_sociale +
-                        "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté," +
-                        result.creancier.denomination_sociale +
-                        "lui a fait confiance et lui a "
-                      : false
+                  isPaiementEcheance: facture.paiement_echeance === true ? "les factures devaient être payées à": false,
+                  isPaiementLivraison: facture.paiement_livraison === true ? result.debiteur.denomination_sociale + "devait payer l’intégralité au plus tard à la livraison. Or, pour ne pas la mettre en difficulté," + result.creancier.denomination_sociale + "lui a fait confiance et lui a ": false
                 };
               }),
               avoirs: lesAvoirs.map(avoir => {
@@ -371,16 +362,9 @@ module.exports = {
               calcul_creance_principale_TTC: result.calcul_total_creance,
               isCreanceHT: result.option_ttc_factures === false ? true : false,
               isCreanceTTC: result.option_ttc_factures === true ? true : false,
-              isProduitsServices:
-                result.produits && result.services === true ? true : false,
-              isProduits:
-                result.produits === true && result.services == false
-                  ? "produits vendus"
-                  : false,
-              isServices:
-                result.services == true && result.produits == false
-                  ? "services fournis"
-                  : false,
+              isProduitsServices: result.produits && result.services === true ? true : false,
+              isProduits: result.produits === true && result.services == false ? true : false,
+              isServices: result.services === true && result.produits === false ? true: false,
               entreprise_française:
                 "En application de l’article L. 441-6 du Code de commerce, les factures impayées font courir des intérêts légaux au taux de refinancement de la BCE majoré de 10 points, à compter de leur date d’échéance sans qu’un rappel soit nécessaire, outre le paiement d’une indemnité forfaitaire pour frais de recouvrement de quarante euros par facture impayée et le remboursement de tous autres frais complémentaires de recouvrement.",
               entreprise_italienne:
@@ -392,8 +376,8 @@ module.exports = {
               isMontantHono: result.honoraires !== 0 ? true : false,
               isHonorairesHT: result.option_ttc_hono === false ? true : false,
               isHonorairesTTC: result.option_ttc_hono === true ? true : false,
-              total_creance_principale_TTC: totalCreanceTTC,
-              total_creance_principale_HT: totalCreanceHT,
+              total_creance_principale_TTC: totalCreanceTTC.toFixed(2),
+              total_creance_principale_HT: totalCreanceHT.toFixed(2),
               frais: fraisRecouvrement
             });
 
