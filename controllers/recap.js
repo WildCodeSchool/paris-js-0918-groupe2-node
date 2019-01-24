@@ -191,16 +191,15 @@ module.exports = {
             infosRecap.push(myFinalAlgoResultSorted[i][key]);
           });
         }
-
+  
         let recap = [];
 
         for (let i = 0; i < infosRecap.length; i++) {
           for (let j = 0; j < infosRecap[i].length; j++) {
-            recap.push(infosRecap[i][j]);
-          }
+           recap.push(infosRecap[i][j]);   
         }
+      }
 
-        // console.log(recap)
 
         ////////////////////////////////////////////////////
         // CETTE SECTION SERT A CALCULER LE MONTANT TOTAL //
@@ -256,8 +255,6 @@ module.exports = {
           tabTTC.push([creanceTotaleSansPartielsTTC[i]]);
         }
 
-        console.log(tabTTC)
-
         let tabHT = [];
         for (let i = 0; i < creanceTotaleSansPartielsHT.length; i++) {
           tabHT.push([creanceTotaleSansPartielsHT[i]]);
@@ -304,29 +301,27 @@ module.exports = {
                   date_facture: facture.date_facture,
                   echeance_facture: facture.echeance_facture,
                   montant_facture_HT: facture.montant_ht,
-                  isFacturestHT: result.option_ttc_factures === false ? true : false,
+                  isFacturesHT: result.option_ttc_factures === false ? true : false,
                   montant_facture_TTC: facture.montant_ttc,
                   isFacturesTTC: result.option_ttc_factures === true ? true : false,
                 };
               }),
-              calcul_creance_principale_HT: "",
-              calcul_creance_principale_TTC: "",
               taux_BCE: "",
               points_entreprise_française: "de 10 points",
               points_entreprise_italienne: "de 8 points",
-              infoRecap: recap.map(info => {
+              tabRecap: recap.map(newRecap => {
                 return {
-                  date_debut: info.date_debut,
-                  date_fin: info.date_fin,
-                  nombre_jours_interets: info.nbre_jours_comptabilises,
-                  tauxFr: info.taux_interet_applique + 10,
-                  tauxIt: info.taux_interet_applique + 8,
+                  date_debut: newRecap.date_debut,
+                  date_fin: newRecap.date_fin,
+                  nombre_jours_interets: newRecap.nbre_jours_comptabilises,
+                  tauxFr: newRecap.taux_interet_applique + 10,
+                  tauxIt: newRecap.taux_interet_applique + 8,
                   isTauxFr: result.taux_interets === 10 ? true : false,
                   isTauxIt: result.taux_interets === 8 ? true : false,
-                  montant_interets: info.interets_periode.toFixed(2),
-                  montant_creance: info.creance_sur_cette_periode
-                };
-              }),
+                  montant_interets: newRecap.interets_periode.toFixed(2),
+                  montant_creance: newRecap.creance_sur_cette_periode
+                }
+                }),
               tableauTTC: tabTTC.map(newTabTTC => {
                 return {
                   montant_ttc: newTabTTC,

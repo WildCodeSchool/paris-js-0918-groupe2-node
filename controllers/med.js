@@ -103,7 +103,7 @@ module.exports = {
                 montant_ttc: result.factures[i].avoirs[k].montant_ht
               });
             }
-
+            
             let mesPaiementsPartiels = [];
 
             for (let l = 0; l < result.factures[i].partiels.length; l++) {
@@ -257,6 +257,8 @@ module.exports = {
               }
             }
 
+            console.log(JSON.stringify(lesPartiels, null, 2))
+
             let fraisRecouvrement = nbreFactures * 40;
             let totalCreanceTTC =
               result.calcul_total_creance +
@@ -299,7 +301,7 @@ module.exports = {
                   numero_facture: facture.num_facture,
                   date_facture: facture.date_facture,
                   montant_facture_ht: facture.montant_ht,
-                  isFacturestHT:
+                  isFacturesHT:
                     result.option_ttc_factures === false ? true : false,
                   montant_facture_ttc: facture.montant_ttc,
                   isFacturesTTC:

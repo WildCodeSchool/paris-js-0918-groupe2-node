@@ -82,7 +82,7 @@ module.exports = {
             }
 
             doc.setData({
-              ville_pres_TC_Requete: result.creancier.ville_siege,
+              ville_pres_TC_Requete: result.creancier.ville_siege.toUpperCase(),
               nationalite_creancier: result.creancier.nationalite_societe,
               denomination_sociale_creancier:
                 result.creancier.denomination_sociale,
@@ -127,14 +127,14 @@ module.exports = {
                   numero_facture: facture.num_facture,
                   date_facture: facture.date_facture,
                   montant_facture_ht: facture.montant_ht,
-                  isFacturestHT:
-                  result.option_ttc_factures == false
-                    ? facture.montant_ht
+                  isFacturesHT:
+                  result.option_ttc_factures === false
+                    ? true
                     : false,
                   montant_facture_ttc: facture.montant_ttc,
                   isFacturesTTC:
-                    result.option_ttc_factures == true
-                      ? facture.montant_ttc
+                    result.option_ttc_factures === true
+                      ? true
                       : false,
                   echeance_facture: facture.echeance_facture,
                   calcul_acomptes_payes: "",
