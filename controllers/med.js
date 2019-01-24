@@ -1,6 +1,7 @@
 const models = require("../models");
 const JSZip = require("jszip");
 const Docxtemplater = require("docxtemplater");
+const { Op } = require("sequelize");
 const algo = require("../dojoalgo").maSuperMetaFonction;
 const moment = require("moment");
 moment().format();
@@ -21,7 +22,7 @@ module.exports = {
           {
             model: models.facture,
             where: { active: true },
-            include: [
+            [Op.or]: [
               { model: models.acompte, where: { active: true } },
               { model: models.avoir, where: { active: true } },
               { model: models.partiel, where: { active: true } }
@@ -268,7 +269,7 @@ module.exports = {
               result.honoraires +
               myFinalInterestSum +
               fraisRecouvrement;
-
+            console.log(JSON.stringify(lesAvoirs, null, 2));
             doc.setData({
               denomination_sociale_debiteur:
                 result.debiteur.denomination_sociale,
