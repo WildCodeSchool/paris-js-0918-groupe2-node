@@ -191,6 +191,7 @@ module.exports = {
             infosRecap.push(myFinalAlgoResultSorted[i][key]);
           });
         }
+<<<<<<< HEAD
 
         let infosRecap2 = [];
         for (let i = 0; i < myFinalAlgoResultSorted.length; i++) {
@@ -199,15 +200,21 @@ module.exports = {
           });
         }
 
+=======
+  
+>>>>>>> 0b344f92425b9259a8b9bb6d37279df25afc2e83
         let recap = [];
 
         for (let i = 0; i < infosRecap.length; i++) {
           for (let j = 0; j < infosRecap[i].length; j++) {
-            recap.push(infosRecap[i][j]);
-          }
+           recap.push(infosRecap[i][j]);   
         }
+      }
 
+<<<<<<< HEAD
         console.log(infosRecap);
+=======
+>>>>>>> 0b344f92425b9259a8b9bb6d37279df25afc2e83
 
         ////////////////////////////////////////////////////
         // CETTE SECTION SERT A CALCULER LE MONTANT TOTAL //
@@ -263,8 +270,11 @@ module.exports = {
           tabTTC.push([creanceTotaleSansPartielsTTC[i]]);
         }
 
+<<<<<<< HEAD
         // console.log(tabTTC);
 
+=======
+>>>>>>> 0b344f92425b9259a8b9bb6d37279df25afc2e83
         let tabHT = [];
         for (let i = 0; i < creanceTotaleSansPartielsHT.length; i++) {
           tabHT.push([creanceTotaleSansPartielsHT[i]]);
@@ -400,18 +410,21 @@ module.exports = {
                   date_facture: facture.date_facture,
                   echeance_facture: facture.echeance_facture,
                   montant_facture_HT: facture.montant_ht,
+<<<<<<< HEAD
                   isFacturestHT:
                     result.option_ttc_factures === false ? true : false,
+=======
+                  isFacturesHT: result.option_ttc_factures === false ? true : false,
+>>>>>>> 0b344f92425b9259a8b9bb6d37279df25afc2e83
                   montant_facture_TTC: facture.montant_ttc,
                   isFacturesTTC:
                     result.option_ttc_factures === true ? true : false
                 };
               }),
-              calcul_creance_principale_HT: "",
-              calcul_creance_principale_TTC: "",
               taux_BCE: "",
               points_entreprise_française: "de 10 points",
               points_entreprise_italienne: "de 8 points",
+<<<<<<< HEAD
               infoRecap: infosRecap.map((facture, index) => {
                 for (let i = 0; i < facture.length; i++) {
                   return {
@@ -444,6 +457,21 @@ module.exports = {
                   loop: facture.length //
                 };
               }),
+=======
+              tabRecap: recap.map(newRecap => {
+                return {
+                  date_debut: newRecap.date_debut,
+                  date_fin: newRecap.date_fin,
+                  nombre_jours_interets: newRecap.nbre_jours_comptabilises,
+                  tauxFr: newRecap.taux_interet_applique + 10,
+                  tauxIt: newRecap.taux_interet_applique + 8,
+                  isTauxFr: result.taux_interets === 10 ? true : false,
+                  isTauxIt: result.taux_interets === 8 ? true : false,
+                  montant_interets: newRecap.interets_periode.toFixed(2),
+                  montant_creance: newRecap.creance_sur_cette_periode
+                }
+                }),
+>>>>>>> 0b344f92425b9259a8b9bb6d37279df25afc2e83
               tableauTTC: tabTTC.map(newTabTTC => {
                 return {
                   montant_ttc: newTabTTC,
