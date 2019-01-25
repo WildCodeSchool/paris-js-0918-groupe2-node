@@ -73,9 +73,13 @@ module.exports = {
             intérets_capitalises:
               req.body.intérets_capitalises || facture.intérets_capitalises,
             paiement_echeance:
-              req.body.paiement_echeance || facture.paiement_echeance,
+              req.body.paiement_echeance !== undefined
+                ? req.body.paiement_echeance
+                : facture.paiement_echeance,
             paiement_livraison:
-              req.body.paiement_livraison || facture.paiement_livraison,
+              req.body.paiement_livraison !== undefined
+                ? req.body.paiement_livraison
+                : facture.paiement_livraison,
             active: req.body.active || facture.active
           })
           .then(facture => res.status(200).send(facture))
