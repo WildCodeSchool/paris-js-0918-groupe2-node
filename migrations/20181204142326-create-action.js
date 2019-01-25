@@ -44,16 +44,25 @@ module.exports = {
       frais_recouvrement: {
         type: Sequelize.FLOAT
       },
+      taux_interets: {
+        type: Sequelize.FLOAT
+      },
       honoraires: {
         type: Sequelize.FLOAT
       },
-      somme_totale_ttc: {
-        type: Sequelize.FLOAT
+      option_ttc_factures: {
+        type: Sequelize.BOOLEAN
       },
-      somme_totale_ht: {
-        type: Sequelize.FLOAT
+      option_ttc_hono: {
+        type: Sequelize.BOOLEAN
       },
-      date_mise_en_demeure: {
+      option_1: {
+        type: Sequelize.STRING
+      },
+      option_2: {
+        type: Sequelize.STRING
+      },
+      option_3: {
         type: Sequelize.STRING
       },
       active: {

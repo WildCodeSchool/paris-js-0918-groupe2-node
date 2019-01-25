@@ -1,6 +1,8 @@
 const facture = require("../models").facture;
 const action = require("../models").action;
-const models = require("../models")
+
+const models = require("../models");
+
 
 module.exports = {
   list(req, res) {
@@ -22,6 +24,8 @@ module.exports = {
         echeance_facture: req.body.echeance_facture,
         taux_applicable: req.body.taux_applicable,
         intérets_capitalises: req.body.intérets_capitalises,
+        paiement_echeance: req.body.paiement_echeance,
+        paiement_livraison: req.body.paiement_livraison,
         active: req.body.active
       })
       .then(facture => {
@@ -33,17 +37,21 @@ module.exports = {
       })
       .catch(error => res.status(400).send(error));
   },
-  get(req, res){
+
+  get(req, res) {
     return facture
-    .findOne({ 
-      where: { id: req.params.factureId},
-      include: [{
-        model : models.acompte},
-        {model : models.avoir
-       
-      }]
-    })
-    .then(factures => res.status(200).send(factures))
+      .findOne({
+        where: { id: req.params.factureId },
+        include: [
+          {
+            model: models.acompte
+          },
+          { model: models.avoir },
+          { model: models.partiel }
+        ]
+      })
+      .then(factures => res.status(200).send(factures));
+
   },
   update(req, res) {
     return facture
@@ -68,6 +76,10 @@ module.exports = {
               req.body.taux_applicable || facture.taux_applicable,
             intérets_capitalises:
               req.body.intérets_capitalises || facture.intérets_capitalises,
+            paiement_echeance:
+              req.body.paiement_echeance || facture.paiement_echeance,
+            paiement_livraison:
+              req.body.paiement_livraison || facture.paiement_livraison,
             active: req.body.active || facture.active
           })
           .then(facture => res.status(200).send(facture))

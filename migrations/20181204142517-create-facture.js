@@ -32,6 +32,12 @@ module.exports = {
       echeance_facture: {
         type: Sequelize.STRING
       },
+      paiement_echeance: {
+        type: Sequelize.BOOLEAN
+      },
+      paiement_livraison: {
+        type: Sequelize.BOOLEAN
+      },
       taux_applicable: {
         type: Sequelize.FLOAT
       },

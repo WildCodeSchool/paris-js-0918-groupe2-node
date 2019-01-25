@@ -29,36 +29,41 @@ const facture = {
 // ];
 const mesAcomptes = [];
 const mesAvoirs = [];
-let facture
+
+// let facture;
 const truc = async () => {
-  const test = await axios.get("http://localhost:4848/api/factures/16")
-  const lesAcomptes = test.data.acomptes
-  const lesAvoirs = test.data.avoirs
-  
-  const acompte = "acompte"
-  const avoir = "avoir"
-  
-  lesAcomptes.map((e,i)=> mesAcomptes.push({
-    [acompte+i] : {
-      montant_ttc : e.montant_ttc
-    }
+  const test = await axios.get("http://localhost:4848/api/factures/16");
+  const lesAcomptes = test.data.acomptes;
+  const lesAvoirs = test.data.avoirs;
 
-  }))
+  const acompte = "acompte";
+  const avoir = "avoir";
 
-  lesAvoirs.map((e,i)=> mesAvoirs.push({
-    [avoir+i] : {
-      montant_ttc : e.montant_ttc}
+  lesAcomptes.map((e, i) =>
+    mesAcomptes.push({
+      [acompte + i]: {
+        montant_ttc: e.montant_ttc
+      }
+    })
+  );
 
-  }))
+  lesAvoirs.map((e, i) =>
+    mesAvoirs.push({
+      [avoir + i]: {
+        montant_ttc: e.montant_ttc
+      }
+    })
+  );
 
-//    facture = {
-//     montant_ttc: 10268,
-//     echeance_facture: "12/09/2011"
-//   }
-// console.log(JSON.stringify(test.data.date_facture))
-//   return facture
-}
-truc()
+  //    facture = {
+  //     montant_ttc: 10268,
+  //     echeance_facture: "12/09/2011"
+  //   }
+  // console.log(JSON.stringify(test.data.date_facture))
+  //   return facture
+};
+truc();
+
 
 // console.log(facture)
 
@@ -496,4 +501,7 @@ getCalculInteretsTotal(
 
 module.exports = {
   getCalculInteretsTotal
+
+};
+
 }
