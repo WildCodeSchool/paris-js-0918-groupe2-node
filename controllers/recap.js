@@ -21,9 +21,17 @@ module.exports = {
             model: models.facture,
             where: { active: true },
             include: [
-              { model: models.acompte, where: { active: true }, required: false },
+              {
+                model: models.acompte,
+                where: { active: true },
+                required: false
+              },
               { model: models.avoir, where: { active: true }, required: false },
-              { model: models.partiel, where: { active: true }, required: false }
+              {
+                model: models.partiel,
+                where: { active: true },
+                required: false
+              }
             ]
           }
         ]
@@ -185,21 +193,21 @@ module.exports = {
           myFinalAlgoResultSortedNoNumber.push({ facture: mySortedResult });
         }
 
-      //   let infosRecap = [];
-      //   for (let i = 0; i < myFinalAlgoResultSorted.length; i++) {
-      //     Object.keys(myFinalAlgoResultSorted[i]).forEach(function(key, index) {
-      //       infosRecap.push(myFinalAlgoResultSorted[i][key]);
-      //     });
-      //   }
-  
-      //   let recap = [];
+        //   let infosRecap = [];
+        //   for (let i = 0; i < myFinalAlgoResultSorted.length; i++) {
+        //     Object.keys(myFinalAlgoResultSorted[i]).forEach(function(key, index) {
+        //       infosRecap.push(myFinalAlgoResultSorted[i][key]);
+        //     });
+        //   }
 
-      //   for (let i = 0; i < infosRecap.length; i++) {
-      //     for (let j = 0; j < infosRecap[i].length; j++) {
-      //      recap.push(infosRecap[i][j]);   
-      //   }
-      // }
-// console.log(infosRecap)
+        //   let recap = [];
+
+        //   for (let i = 0; i < infosRecap.length; i++) {
+        //     for (let j = 0; j < infosRecap[i].length; j++) {
+        //      recap.push(infosRecap[i][j]);
+        //   }
+        // }
+        // console.log(infosRecap)
 
         ////////////////////////////////////////////////////
         // CETTE SECTION SERT A CALCULER LE MONTANT TOTAL //
@@ -302,11 +310,17 @@ module.exports = {
                   date_facture: facture.date_facture,
                   echeance_facture: facture.echeance_facture,
                   montant_facture_HT: facture.montant_ht,
-                  isFacturesHT: result.option_ttc_factures === false ? true : false,
+                  isFacturesHT:
+                    result.option_ttc_factures === false ? true : false,
                   montant_facture_TTC: facture.montant_ttc,
-                  isFacturesTTC: result.option_ttc_factures === true ? true : false,
-                  montant_creance: myFinalAlgoResultSorted[index][`facture_${index}`][0].creance_sur_cette_periode,
-                  infoRecap: myFinalAlgoResultSorted[index][`facture_${index}`].map(newRecap => {
+                  isFacturesTTC:
+                    result.option_ttc_factures === true ? true : false,
+                  montant_creance:
+                    myFinalAlgoResultSorted[index][`facture_${index}`][0]
+                      .creance_sur_cette_periode,
+                  infoRecap: myFinalAlgoResultSorted[index][
+                    `facture_${index}`
+                  ].map(newRecap => {
                     return {
                       date_debut: newRecap.date_debut,
                       date_fin: newRecap.date_fin,
@@ -317,14 +331,14 @@ module.exports = {
                       isTauxIt: result.taux_interets === 8 ? true : false,
                       montant_interets: newRecap.interets_periode.toFixed(2),
                       montant_creance: newRecap.creance_sur_cette_periode
-                    }
-                    }),
-              };
+                    };
+                  })
+                };
               }),
               taux_BCE: "",
               points_entreprise_française: "de 10 points",
               points_entreprise_italienne: "de 8 points",
-           
+
               // tableauTTC: tabTTC.map(newTabTTC => {
               //   return {
               //     montant_ttc: newTabTTC,
