@@ -9,7 +9,9 @@ const fs = require("fs");
 const upload = multer({ dest: "tmp/" });
 const path = require("path");
 const models = require("./models");
+
 // const algo = require('./algotest')
+
 // const router = express.Router();
 
 // Gets all the controllers to be used
@@ -40,6 +42,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
 
 // app.get('/aled', (req, res) => {
 //   algo.getCalculInteretsTotal().then(result => {
@@ -81,7 +84,9 @@ app.put("/api/debiteurs/:debiteurId", debiteursController.update);
 app.delete("/api/debiteurs/:debiteurId", debiteursController.destroy);
 
 // CRUD routes for the Factures
+
 app.get("/api/factures/:factureId", facturesController.get);
+
 app.get("/api/factures", facturesController.list);
 app.post("/api/factures", facturesController.create);
 app.put("/api/factures/:factureId", facturesController.update);
@@ -106,7 +111,9 @@ app.put("/api/partiels/:partielId", partielsController.update);
 app.delete("/api/partiels/:partielId", partielsController.destroy);
 
 // CRUD routes for the Actions
+
 app.get("/api/actions/:actionId/", actionsController.get);
+
 app.get("/api/actions", actionsController.list);
 app.post("/api/actions", actionsController.create);
 app.put("/api/actions/:actionId", actionsController.update);
