@@ -323,6 +323,7 @@ module.exports = {
                     facture.paiement_echeance === true
                       ? "les factures devaient être payées à"
                       : false,
+                  // isTexteEcheance : fac
                   isPaiementLivraison:
                     facture.paiement_livraison === true
                       ? result.debiteur.denomination_sociale +

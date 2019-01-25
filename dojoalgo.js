@@ -606,6 +606,8 @@ const maSuperMetaFonction = async (
             points
           )
         );
+        // factureModif.montant_ttc =
+        //   factureModif.montant_ttc - mesPaiementsPartiels[i - 1].montant_ttc;
         // date paiement partiel intermediaire => date autre paiement partiel intermediaire
       } else if (i !== 0 && i !== nbrePaiementsPartiels - 1) {
         // console.log(i);
@@ -626,7 +628,7 @@ const maSuperMetaFonction = async (
           )
         );
         factureModif.montant_ttc =
-          factureModif.montant_ttc - mesPaiementsPartiels[i - 1].montant_ttc;
+          factureModif.montant_ttc - mesPaiementsPartiels[i].montant_ttc;
       }
     }
   }
