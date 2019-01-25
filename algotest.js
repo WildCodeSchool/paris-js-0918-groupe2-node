@@ -4,6 +4,7 @@ moment().format();
 
 // DONNEES CONCERNANT UNE FACTURE SPECIFIQUE (A RECUP DE LA BDD)
 
+
 const facture = {
   montant_ttc: 10268,
   echeance_facture: "12/09/2011"
@@ -28,6 +29,7 @@ const facture = {
 // ];
 const mesAcomptes = [];
 const mesAvoirs = [];
+
 // let facture;
 const truc = async () => {
   const test = await axios.get("http://localhost:4848/api/factures/16");
@@ -61,6 +63,7 @@ const truc = async () => {
   //   return facture
 };
 truc();
+
 
 // console.log(facture)
 
@@ -498,4 +501,7 @@ getCalculInteretsTotal(
 
 module.exports = {
   getCalculInteretsTotal
+
 };
+
+}
